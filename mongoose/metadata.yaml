@@ -1,0 +1,14 @@
+# yaml-language-server: $schema=../.schemas/skill-metadata.schema.json
+category: api-database
+slug: mongoose
+domain: api
+author: "@vince"
+displayName: Mongoose
+cliDescription: MongoDB ODM schemas, validation, middleware, & JSDoc typing
+usageGuidance: Use when working with MongoDB via Mongoose — schema definitions,
+  model creation, queries, population, middleware hooks, virtuals, and
+  JSDoc-documented document shapes
+forkedFrom:
+  skillId: api-database-mongoose
+  source: https://github.com/agents-inc/skills/blob/main/src/skills/api-database-mongoose/SKILL.md
+  date: 2026-04-30

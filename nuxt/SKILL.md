@@ -30,5 +30,6 @@ to branch the code, and use dynamic imports if needed.
 
 ## Development Standards
 
-Reference the [Development Standards](rules/nuxt-development-standards.md) for more specific information about working with Nuxt.
-Reference the [Nuxt and TailwindCSS](rules/nuxt-and-tailwindcss.md) for more specific information about working with TailwindCSS in Nuxt projects.
+- Reference the [Development Standards](rules/nuxt-development-standards.md) for more specific information about working with Nuxt.
+- Reference the [Nuxt and TailwindCSS](rules/nuxt-and-tailwindcss.md) for more specific information about working with TailwindCSS in Nuxt projects.
+- Reference the [JavaScript](../javascript/SKILL.md) skill for more specific information about working with JavaScript in Nuxt projects.

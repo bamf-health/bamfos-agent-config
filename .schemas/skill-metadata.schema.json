@@ -1,0 +1,136 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "schemas/skill-metadata.schema.json",
+  "title": "Skill Metadata (local override)",
+  "description": "Local copy of agents-inc/cli metadata schema with the closed `slug` enum relaxed so unregistered skills (e.g. mongoose) validate cleanly.",
+  "type": "object",
+  "properties": {
+    "category": {
+      "type": "string",
+      "enum": [
+        "ai-infrastructure",
+        "ai-observability",
+        "ai-orchestration",
+        "ai-patterns",
+        "ai-provider",
+        "api-analytics",
+        "api-api",
+        "api-auth",
+        "api-baas",
+        "api-cms",
+        "api-commerce",
+        "api-database",
+        "api-email",
+        "api-flags",
+        "api-framework",
+        "api-observability",
+        "api-performance",
+        "api-search",
+        "api-vector-db",
+        "cli-framework",
+        "infra-ci-cd",
+        "infra-config",
+        "infra-platform",
+        "meta-methodology",
+        "meta-reviewing",
+        "mobile-framework",
+        "shared-monorepo",
+        "shared-security",
+        "shared-tooling",
+        "web-accessibility",
+        "web-animation",
+        "web-client-state",
+        "web-data-fetching",
+        "web-error-handling",
+        "web-file-upload",
+        "web-files",
+        "web-forms",
+        "web-framework",
+        "web-i18n",
+        "web-meta-framework",
+        "web-mocking",
+        "web-performance",
+        "web-pwa",
+        "web-realtime",
+        "web-routing",
+        "web-server-state",
+        "web-styling",
+        "web-testing",
+        "web-tooling",
+        "web-ui-components",
+        "web-utilities"
+      ]
+    },
+    "author": {
+      "type": "string",
+      "pattern": "^@[a-z][a-z0-9-]*$"
+    },
+    "displayName": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 30
+    },
+    "cliDescription": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 60
+    },
+    "usageGuidance": {
+      "type": "string",
+      "minLength": 10
+    },
+    "slug": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]*$"
+    },
+    "contentHash": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{7}$"
+    },
+    "updated": {
+      "type": "string"
+    },
+    "forkedFrom": {
+      "type": "object",
+      "properties": {
+        "skillId": {
+          "type": "string"
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        },
+        "contentHash": {
+          "type": "string"
+        },
+        "source": {
+          "type": "string"
+        },
+        "date": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "skillId",
+        "date"
+      ],
+      "additionalProperties": false
+    },
+    "domain": {
+      "type": "string"
+    },
+    "custom": {
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "category",
+    "author",
+    "displayName",
+    "cliDescription",
+    "usageGuidance",
+    "slug"
+  ],
+  "additionalProperties": false
+}
