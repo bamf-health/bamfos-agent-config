@@ -1,3 +1,14 @@
+---
+name: not-ready-js
+description: JavaScript features that are not yet ready for use in most situations.
+metadata:
+  source_repo: https://github.com/Cst2989/react-tips-skill/blob/main/skills/not-ready-js/SKILL.md
+---
+
+# Not Ready JavaScript
+
+**IMPORTANT:** The advice in this skill is not ready for use in most situations. Note each section's "When to use" note before applying the advice. If it says "NOT YET", don't use the advice. If it notes a version number, check that the version number is supported by the current runtime.
+
 ## Iterators and collections
 
 ### Concatenating iterators
@@ -118,6 +129,7 @@ const allItems = await Array.fromAsync(fetchPages());
 
 ### Summing an array of floats
 
+**When to use:** Only in browsers. NOT YET for Node.js.
 Use `Math.sumPrecise(values)`. Especially important for financial values or long arrays where rounding drift compounds.
 
 ```javascript

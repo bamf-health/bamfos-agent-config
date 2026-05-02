@@ -1,6 +1,8 @@
 ---
 name: modern-js
 description: Use when writing or reviewing JavaScript - prefer ES2025/ES2026 APIs (Iterator helpers, Set methods, Temporal, using, Promise.try, Error.isError, Math.sumPrecise, Map.getOrInsert) over older patterns.
+metadata:
+  source_repo: https://github.com/Cst2989/react-tips-skill
 ---
 
 # Modern JavaScript Preferences (ES2025/ES2026)
@@ -136,22 +138,6 @@ if (Error.isError(maybeError)) {
 
 ## Numbers
 
-### Summing an array of floats
-
-Use `Math.sumPrecise(values)`. Especially important for financial values or long arrays where rounding drift compounds.
-
-```javascript
-const cents = Array(10000).fill(0.1);
-
-// BAD: accumulates error
-cents.reduce((a, b) => a + b); // 1000.0000000001588
-
-// GOOD
-Math.sumPrecise(cents); // 1000
-```
-
-Also handles catastrophic cancellation: `Math.sumPrecise([1e20, 1, -1e20])` returns `1`, not `0`.
-
 ### Encoding/decoding bytes
 
 Use the `Uint8Array` methods. Never use `btoa`/`atob` on byte arrays — they only work on strings and break on non-Latin1.
@@ -163,22 +149,6 @@ bytes.toBase64(); // "SGVsbG8="
 bytes.toHex(); // "48656c6c6f"
 Uint8Array.fromBase64('SGVsbG8=');
 Uint8Array.fromHex('48656c6c6f');
-```
-
-## Regular expressions
-
-### Building a regex from user-controlled input
-
-Use `RegExp.escape(input)` instead of a custom escape function.
-
-```javascript
-// BAD: every codebase ships its own buggy version
-const escapeRegex = function(str) {
-  return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-};
-
-// GOOD
-const pattern = new RegExp(RegExp.escape(userInput));
 ```
 
 ## Modules
@@ -197,8 +167,6 @@ const translations = await import('./translations.json', {
 ```
 
 The `with { type: 'json' }` is required — it tells the loader to refuse the file if the MIME type doesn't match.
-
-
 
 Restrictions: namespace form only (no `import defer { foo }` or default imports), and modules that use top-level `await` can't be deferred.
 
