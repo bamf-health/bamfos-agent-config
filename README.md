@@ -14,4 +14,3 @@ This repository contains a collection of AI skills for Cursor, Copilot, or any o
 - [node](node/SKILL.md)
 - [nuxt](nuxt/SKILL.md)
 - [security-best-practices](security-best-practices/SKILL.md)
-- [web-coder](web-coder/SKILL.md)

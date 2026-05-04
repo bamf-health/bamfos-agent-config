@@ -17,18 +17,17 @@ Use `Iterator.prototype` methods (`.map`, `.filter`, `.take`, `.drop`, `.toArray
 
 ```javascript
 // BAD: materializes the whole sequence
-{
-  const firstTenEvenSquares = [];
+const badFirstTenEvenSquares = [];
 
-  for (const n of naturalNumbers()) {
-    if (n % 2 === 0) {
-      firstTenEvenSquares.push(n * n);
-      if (firstTenEvenSquares.length === 10) {
-        break;
-      }
+for (const n of naturalNumbers()) {
+  if (n % 2 === 0) {
+    badFirstTenEvenSquares.push(n * n);
+    if (badFirstTenEvenSquares.length === 10) {
+      break;
     }
   }
 }
+
 
 // GOOD: lazy, stops pulling upstream after 10
 const firstTenEvenSquares = naturalNumbers()
@@ -44,11 +43,9 @@ Use `Iterator.from(x)` instead of `[...x]` or `Array.from(x)`.
 
 ```javascript
 // BAD: allocates an intermediate array
-{
-  const ids = Array.from(document.querySelectorAll('.card'))
-  .filter((el) => !el.classList.contains('hidden'))
-  .map((el) => el.dataset.id);
-}
+const badIds = Array.from(document.querySelectorAll('.card'))
+.filter((el) => !el.classList.contains('hidden'))
+.map((el) => el.dataset.id);
 
 // GOOD: lazy, no intermediate array
 const ids = Iterator.from(document.querySelectorAll('.card'))
@@ -62,6 +59,8 @@ const ids = Iterator.from(document.querySelectorAll('.card'))
 Use the native methods. Never write a manual loop.
 
 ```javascript
+const frontEnd = new Set(['React', 'Vue', 'Angular', 'Svelte']);
+
 // BAD
 const shared = new Set();
 
@@ -91,29 +90,26 @@ Use `using` (sync) or `await using` (async). Never write `try/finally` for clean
 
 ```javascript
 // BAD: manual cleanup, easy to forget
-{
-  const transferMoney = async function(from, to, amount) {
-    const tx = await db.beginTransaction();
+const badTransferMoney = async function(from, to, amount) {
+  const tx = await db.beginTransaction();
 
-    try {
-      await tx.debit(from, amount);
-      await tx.credit(to, amount);
-      await tx.commit();
-    } finally {
-      await tx.release();
-    }
-  };
-}
-
-// GOOD: cleanup moves to the declaration
-{
-  const transferMoney = async function(from, to, amount) {
-    await using tx = await db.beginTransaction();
+  try {
     await tx.debit(from, amount);
     await tx.credit(to, amount);
     await tx.commit();
-  };
-}
+  } finally {
+    await tx.release();
+  }
+};
+
+// GOOD: cleanup moves to the declaration
+
+const transferMoney = async function(from, to, amount) {
+  await using tx = await db.beginTransaction();
+  await tx.debit(from, amount);
+  await tx.credit(to, amount);
+  await tx.commit();
+};
 ```
 
 The resource must implement `[Symbol.dispose]` (sync) or `[Symbol.asyncDispose]` (async). Multiple `using` declarations in the same scope dispose in reverse order (LIFO).
@@ -172,11 +168,8 @@ Restrictions: namespace form only (no `import defer { foo }` or default imports)
 
 ## Rules
 
-- NEVER suggest moment.js, date-fns, or luxon for new code. Use Temporal.
 - NEVER write `instanceof Error` in library code. Use `Error.isError`.
-- NEVER write `try/finally` for cleanup when `using` works.
 - NEVER write a manual `for await...of` loop just to collect into an array. Use `Array.fromAsync`.
-- NEVER write `if (!map.has(k)) map.set(k, v)`. Use `getOrInsert` / `getOrInsertComputed`.
 - NEVER use a manual escape function for user-controlled regex input. Use `RegExp.escape`.
 - NEVER materialize a huge iterator into an array before filtering. Use `Iterator.prototype` methods.
 - ALWAYS check if the target runtime supports the feature. If it doesn't, suggest a polyfill.
@@ -187,15 +180,10 @@ Restrictions: namespace form only (no `import defer { foo }` or default imports)
 |-------------|------------|
 | `Array.from(iter).map(...)` on huge/infinite data | `Iterator.from(iter).map(...).toArray()` |
 | Manual Set intersection/union/diff loops | `a.intersection(b)`, `a.union(b)`, `a.difference(b)` |
-| `if (!map.has(k)) map.set(k, v)` | `map.getOrInsert(k, v)` |
-| `yield* a(); yield* b();` | `Iterator.concat(a(), b())` |
-| moment.js / date-fns / luxon | `Temporal` |
-| `try/finally` for resource cleanup | `using` / `await using` |
 | `instanceof Error` | `Error.isError(x)` |
 | `arr.reduce((a, b) => a + b)` on floats | `Math.sumPrecise(arr)` |
 | Custom base64/hex helpers | `bytes.toBase64()`, `Uint8Array.fromBase64(s)` |
 | Manual regex escape function | `RegExp.escape(input)` |
 | `fetch('./x.json').then(r => r.json())` at build time | `import x from './x.json' with { type: 'json' }` |
-| Eager `import * as heavy from './heavy.js'` | `import defer * as heavy from './heavy.js'` |
 | `try { fn() } catch ... Promise.resolve(res).then(...)` | `Promise.try(() => fn()).then(...)` |
 | `for await (const x of iter) arr.push(x)` | `await Array.fromAsync(iter)` |

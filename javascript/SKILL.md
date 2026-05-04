@@ -30,7 +30,9 @@ This skill provides a general overview of JavaScript best practices and guidelin
 ```javascript
 const toggle = () => {/* code */};
 const factorial = function factorial(n) {
-  if (n <= 1) return 1;
+  if (n <= 1) {
+    return 1;
+  }
   return n * factorial(n - 1);
 };
 ```
@@ -41,7 +43,9 @@ const factorial = function factorial(n) {
 function toggle() {/* code */}
 
 function factorial(n) {
-  if (n <= 1) return 1;
+  if (n <= 1) {
+    return 1;
+  }
   return n * factorial(n - 1);
 }
 ```
@@ -87,3 +91,10 @@ export function useUser(user = null) {
   };
 }
 ```
+
+## Reference Files
+
+Load these as needed based on the task:
+
+- **[references/modern-js.md](references/modern-js.md)** — Modern JavaScript best practices and guidelines. Read when writing or debugging any JavaScript code.
+- **[references/not-ready-js.md](references/not-ready-js.md)** — JavaScript features that are not yet ready for use in most situations. Only use these features if the target runtime supports them as indicated in their "When to use" notes.
