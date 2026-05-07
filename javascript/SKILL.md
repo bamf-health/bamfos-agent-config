@@ -57,7 +57,6 @@ function factorial(n) {
 - Use `@type` and `@typedef` JSDoc comments for typed props and default values
 - Use `@example` JSDoc comments for code examples
 - Use `@deprecated` JSDoc comments for deprecated functions
-- Use `@file` JSDoc comments for file descriptions
 - Use `@module` JSDoc comments for module descriptions
 - Use `@namespace` JSDoc comments for namespace descriptions
 
@@ -91,6 +90,28 @@ export function useUser(user = null) {
   };
 }
 ```
+
+## Promises
+
+- Prefer async/await over mixed promise chains
+- Throw and handle specific error classes with clear operational meaning
+- Use `Promise.all` for multiple promises that should run in parallel and all succeed for the operation to succeed
+- Use `Promise.allSettled` for multiple promises that should not fail the entire operation if one fails
+- Use `Promise.race` for multiple promises when you only need the result of the first to succeed or fail
+- Use `Promise.any` for multiple promises when you only need the result of the first one that succeeds, and only fail if all fail
+
+## Security
+
+- Treat all external input as untrusted; validate and sanitize it.
+- Prevent injection attacks by parameterizing queries and escaping output contexts
+- Avoid logging secrets, tokens, or PII.
+- Ensure logging contains enough context for triage without leaking secrets
+
+## Performance
+
+- Avoid repeated expensive operations in loops; cache intentionally
+- Bound concurrency for bulk async operations
+- Stream or paginate large payloads to avoid memory issues
 
 ## Reference Files
 
