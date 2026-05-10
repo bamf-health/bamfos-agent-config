@@ -67,7 +67,7 @@ Use `Temporal`. Never reach for moment.js, date-fns, or luxon for new code.
 ```javascript
 // Parse with timezone
 const meeting = Temporal.ZonedDateTime.from(
-  '2026-06-15T09:00[America/New_York]'
+  '2026-06-15T09:00[America/New_York]',
 );
 
 // Convert timezones
@@ -77,52 +77,28 @@ const inLondon = meeting.withTimeZone('Europe/London');
 const birthday = Temporal.PlainDate.from('1993-10-26');
 const today = Temporal.Now.plainDateISO();
 const age = today.since(birthday, {largestUnit: 'years'});
-
-age.years; // 32
+// age.years === 32
 ```
 
 Pick the type by what you actually mean: `PlainDate` (no time), `PlainTime` (no date), `ZonedDateTime` (moment in a zone), `PlainDateTime` (date + time, no zone), `Instant` (absolute moment), `PlainYearMonth`/`PlainMonthDay` (partial).
 
-## Promises and async
+## Errors
 
-### Calling a function that might be sync, async, or throw
+### Checking if a caught value is an Error
 
-**When to use:** All current browsers and Node.js 24+ only.
-
-Use `Promise.try(() => fn())`. Sync throws, async rejections, and plain return values all flow through the same `.then`/`.catch`.
+**When to use:** On the server side, when Node.js is 24.3+ only. In browsers, when Safari supports it (not yet as of version 26.5).
+Use `Error.isError(x)` instead of `x instanceof Error`. `instanceof` is unreliable across realms (Workers, iframes, Node `vm`) because each realm has its own `Error` constructor.
 
 ```javascript
-// BAD: two error paths to remember
-try {
-  const result = thirdParty.doThing();
-
-  Promise.resolve(result).then(processResult).catch(handleAnyFailure);
-} catch (err) {
-  handleAnyFailure(err);
+// BAD: fails for errors from Workers/iframes
+if (maybeError instanceof Error) {
+  // handle
 }
 
 // GOOD
-Promise.try(() => thirdParty.doThing())
-.then(processResult)
-.catch(handleAnyFailure);
-```
-
-### Collecting an async iterable into an array
-
-Use `Array.fromAsync`. Never write a manual `for await...of` loop just to push items into an array.
-
-```javascript
-// BAD
-{
-  const allItems = [];
-
-  for await (const item of fetchPages()) {
-    allItems.push(item);
-  }
+if (Error.isError(maybeError)) {
+  // handle
 }
-
-// GOOD
-const allItems = await Array.fromAsync(fetchPages());
 ```
 
 ## Numbers
@@ -144,24 +120,6 @@ Math.sumPrecise(cents); // 1000
 
 Also handles catastrophic cancellation: `Math.sumPrecise([1e20, 1, -1e20])` returns `1`, not `0`.
 
-## Regular expressions
-
-### Building a regex from user-controlled input
-
-**When to use:** All current browsers and Node.js 24+ only.
-
-Use `RegExp.escape(input)` instead of a custom escape function.
-
-```javascript
-// BAD: every codebase ships its own buggy version
-const escapeRegex = function(str) {
-  return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-};
-
-// GOOD
-const pattern = new RegExp(RegExp.escape(userInput));
-```
-
 ## Modules
 
 ### Importing a large module that's rarely used
@@ -175,8 +133,8 @@ import * as heavyModule from './heavy.js';
 // GOOD: heavy.js is fetched and parsed, but not executed
 import defer * as heavyModule from './heavy.js';
 
-function rarelyCalled() {
+const rarelyCalled = function() {
   // Reading heavyModule.doExpensiveThing triggers evaluation here
   return heavyModule.doExpensiveThing();
-}
+};
 ```

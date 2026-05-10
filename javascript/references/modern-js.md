@@ -114,22 +114,62 @@ const transferMoney = async function(from, to, amount) {
 
 The resource must implement `[Symbol.dispose]` (sync) or `[Symbol.asyncDispose]` (async). Multiple `using` declarations in the same scope dispose in reverse order (LIFO).
 
-## Errors
+## Promises and async
 
-### Checking if a caught value is an Error
+### Calling a function that might be sync, async, or throw
 
-Use `Error.isError(x)` instead of `x instanceof Error`. `instanceof` is unreliable across realms (Workers, iframes, Node `vm`) because each realm has its own `Error` constructor.
+**When to use:** All current browsers and Node.js 24+ only.
+
+Use `Promise.try(() => fn())`. Sync throws, async rejections, and plain return values all flow through the same `.then`/`.catch`.
 
 ```javascript
-// BAD: fails for errors from Workers/iframes
-if (maybeError instanceof Error) {
-  // handle
+// BAD: two error paths to remember
+try {
+  const result = thirdParty.doThing();
+
+  Promise.resolve(result).then(processResult).catch(handleAnyFailure);
+} catch (err) {
+  handleAnyFailure(err);
 }
 
 // GOOD
-if (Error.isError(maybeError)) {
-  // handle
+Promise.try(() => thirdParty.doThing())
+  .then(processResult)
+  .catch(handleAnyFailure);
+```
+
+### Collecting an async iterable into an array
+
+Use `Array.fromAsync`. Never write a manual `for await...of` loop just to push items into an array.
+
+```javascript
+// BAD
+const badAllItems = [];
+
+for await (const item of fetchPages()) {
+  allItems.push(item);
 }
+
+// GOOD
+const allItems = await Array.fromAsync(fetchPages());
+```
+
+## Regular expressions
+
+### Building a regex from user-controlled input
+
+**When to use:** All current browsers and Node.js 24+ only.
+
+Use `RegExp.escape(input)` instead of a custom escape function.
+
+```javascript
+// BAD: every codebase ships its own buggy version
+const escapeRegex = function (str) {
+  return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+};
+
+// GOOD
+const pattern = new RegExp(RegExp.escape(userInput));
 ```
 
 ## Numbers
@@ -176,14 +216,14 @@ Restrictions: namespace form only (no `import defer { foo }` or default imports)
 
 ## Quick Reference
 
-| Old Pattern | Modern API |
-|-------------|------------|
-| `Array.from(iter).map(...)` on huge/infinite data | `Iterator.from(iter).map(...).toArray()` |
-| Manual Set intersection/union/diff loops | `a.intersection(b)`, `a.union(b)`, `a.difference(b)` |
-| `instanceof Error` | `Error.isError(x)` |
-| `arr.reduce((a, b) => a + b)` on floats | `Math.sumPrecise(arr)` |
-| Custom base64/hex helpers | `bytes.toBase64()`, `Uint8Array.fromBase64(s)` |
-| Manual regex escape function | `RegExp.escape(input)` |
-| `fetch('./x.json').then(r => r.json())` at build time | `import x from './x.json' with { type: 'json' }` |
-| `try { fn() } catch ... Promise.resolve(res).then(...)` | `Promise.try(() => fn()).then(...)` |
-| `for await (const x of iter) arr.push(x)` | `await Array.fromAsync(iter)` |
+| Old Pattern                                             | Modern API                                           |
+| ------------------------------------------------------- | ---------------------------------------------------- |
+| `Array.from(iter).map(...)` on huge/infinite data       | `Iterator.from(iter).map(...).toArray()`             |
+| Manual Set intersection/union/diff loops                | `a.intersection(b)`, `a.union(b)`, `a.difference(b)` |
+| `instanceof Error`                                      | `Error.isError(x)`                                   |
+| `arr.reduce((a, b) => a + b)` on floats                 | `Math.sumPrecise(arr)`                               |
+| Custom base64/hex helpers                               | `bytes.toBase64()`, `Uint8Array.fromBase64(s)`       |
+| Manual regex escape function                            | `RegExp.escape(input)`                               |
+| `fetch('./x.json').then(r => r.json())` at build time   | `import x from './x.json' with { type: 'json' }`     |
+| `try { fn() } catch ... Promise.resolve(res).then(...)` | `Promise.try(() => fn()).then(...)`                  |
+| `for await (const x of iter) arr.push(x)`               | `await Array.fromAsync(iter)`                        |
