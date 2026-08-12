@@ -24,8 +24,9 @@ This skill provides a general overview of JavaScript best practices and guidelin
 - Use named function expressions when you need to use the function name in the function body (e.g. for recursion).
 - Use arrow functions for concise anonymous functions.
 - Avoid arrow functions ONLY when you need to access a `this` keyword scoped within the function.
+- When returning an object literal, NEVER use the shorthand format. Instead, use curly braces and return the object explicitly.
 
-### Good Examples (Function Expressions)
+### Good Examples (Function Expressions and proper return syntax)
 
 ```javascript
 const toggle = () => {/* code */};
@@ -35,9 +36,13 @@ const factorial = function factorial(n) {
   }
   return n * factorial(n - 1);
 };
+
+const getUser = () => {
+  return {name: 'John', age: 30};
+};
 ```
 
-### Bad Examples (Function Declarations)
+### Bad Examples (Function Declarations and improper return syntax)
 
 ```javascript
 function toggle() {/* code */}
@@ -48,6 +53,8 @@ function factorial(n) {
   }
   return n * factorial(n - 1);
 }
+
+const getUser = () => ({name: 'John', age: 30});
 ```
 
 ## JSDoc Comments
