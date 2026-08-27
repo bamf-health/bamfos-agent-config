@@ -147,7 +147,7 @@ When using roving tabindex to manage focus in a composite component, the element
   - If the user interface requires a submit button to _appear_ disabled, then use the appropriate class names to style the button that way, **but** the button must still be enabled and operable.
 
 ### HTML forms NOT built with FormKit
-- The following instructions are for forms that are NOT built with the FormKit library. FormKit has its own set of accessibility instructions elsewhere.
+- The following instructions are for forms that are NOT built with the FormKit library. For FormKit-based forms, refer to `../formkit/SKILL.md`.
 - Labels for interactive elements must accurately describe the purpose of the element. E.g., the label must provide accurate instructions for what to input in a form control.
 - Headings must accurately describe the topic that they introduce.
 - Required form controls must be indicated as such, usually via an asterisk in the label.
