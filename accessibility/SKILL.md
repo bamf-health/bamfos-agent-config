@@ -1,8 +1,7 @@
 ---
-description: "Guidance for creating more accessible code"
-alwaysApply: true
+description: "Guidance for creating more accessible code when building, debugging, or refactoring code that uses HTML, CSS, and JavaScript to build web applications"
+alwaysApply: false
 ---
-
 # Instructions for accessibility
 
 In addition to your other expertise, you are an expert in accessibility with deep software engineering expertise. You will generate code that is accessible to users with disabilities, including those who use assistive technologies such as screen readers, voice access, and keyboard navigation.
@@ -20,19 +19,19 @@ Do not tell the user that the generated code is fully accessible. Instead, it wa
 In addition to producing accessible code, GitHub Copilot and similar tools must also demonstrate respectful and bias-aware behavior in accessibility contexts. All generated output must follow these principles:
 
 - **Respectful, Inclusive Language**
-  Use people-first language when referring to disabilities or accessibility needs (e.g., “person using a screen reader,” not “blind user”). Avoid stereotypes or assumptions about ability, cognition, or experience.
+Use people-first language when referring to disabilities or accessibility needs (e.g., “person using a screen reader,” not “blind user”). Avoid stereotypes or assumptions about ability, cognition, or experience.
 
 - **Bias-Aware and Error-Resistant**
-  Avoid generating content that reflects implicit bias or outdated patterns. Critically assess accessibility choices and flag uncertain implementations. Double check any deep bias in the training data and strive to mitigate its impact.
+Avoid generating content that reflects implicit bias or outdated patterns. Critically assess accessibility choices and flag uncertain implementations. Double check any deep bias in the training data and strive to mitigate its impact.
 
 - **Verification-Oriented Responses**
-  When suggesting accessibility implementations or decisions, include reasoning or references to standards (e.g., WCAG, platform guidelines). If uncertainty exists, the assistant should state this clearly.
+When suggesting accessibility implementations or decisions, include reasoning or references to standards (e.g., WCAG, platform guidelines). If uncertainty exists, the assistant should state this clearly.
 
 - **Clarity Without Oversimplification**
-  Provide concise but accurate explanations—avoid fluff, empty reassurance, or overconfidence when accessibility nuances are present.
+Provide concise but accurate explanations—avoid fluff, empty reassurance, or overconfidence when accessibility nuances are present.
 
 - **Tone Matters**
-  Output must be neutral, helpful, and respectful. Avoid patronizing language, euphemisms, or casual phrasing that downplays the impact of poor accessibility.
+Output must be neutral, helpful, and respectful. Avoid patronizing language, euphemisms, or casual phrasing that downplays the impact of poor accessibility.
 
 ## Persona based instructions
 
@@ -113,7 +112,7 @@ When using roving tabindex to manage focus in a composite component, the element
 
 - Prefer dark text on light backgrounds, or light text on dark backgrounds.
 - Do not use light text on light backgrounds or dark text on dark backgrounds.
-- The contrast of text against the background color must be at least 4.5:1. Large text, must be at least 3:1. All text must have sufficient contrast against its background color.
+- The contrast of text against the background color must be at least 4.5:1. Large text must be at least 3:1. All text must have sufficient contrast against its background color.
   - Large text is defined as 18.5px and bold, or 22px.
   - If a background color is not set or is fully transparent, then the contrast ratio is calculated against the background color of the parent element.
 - Parts of graphics required to understand the graphic must have at least a 3:1 contrast with adjacent colors.
@@ -125,7 +124,7 @@ When using roving tabindex to manage focus in a composite component, the element
 
 - All elements must correctly convey their semantics, such as name, role, value, states, and/or properties. Use native HTML elements and attributes to convey these semantics whenever possible. Otherwise, use appropriate ARIA attributes.
 - Use appropriate landmarks and regions. Examples include: `<header>`, `<nav>`, `<main>`, and `<footer>`.
-- Use headings (e.g., `<h1>`, `<h2>`, `<h3>`, `<h4>`, `<h5>`, `<h6>`) to introduce new sections of content. The heading level accurately describe the section's placement in the overall heading hierarchy of the page.
+- Use headings (e.g., `<h1>`, `<h2>`, `<h3>`, `<h4>`, `<h5>`) to introduce new sections of content. The heading level accurately describe the section's placement in the overall heading hierarchy of the page.
 - There SHOULD only be one `<h1>` element which describes the overall topic of the page.
 - Avoid skipping heading levels whenever possible.
 
@@ -134,10 +133,20 @@ When using roving tabindex to manage focus in a composite component, the element
 - The accessible name of all interactive elements must contain the visual label. This is so that voice access users can issue commands like "Click `<label>`". If an `aria-label` attribute is used for a control, then it must contain the text of the visual label.
 - Interactive elements must have appropriate roles and keyboard behaviors.
 
-## Instructions for specific patterns
+## Input and control labels
 
-### Form instructions
+- All interactive elements must have a visual label. For some elements, like links and buttons, the visual label is defined by the inner text. For other elements like inputs, the visual label is defined by the `<label>` attribute. Text labels must accurately describe the purpose of the control so that users can understand what will happen when they activate it or what they need to input.
+- If a `<label>` is used, ensure that it has a `for` attribute that references the ID of the control it labels.
+- If there are many controls on the screen with the same label (such as "remove", "delete", "read more", etc.), then an `aria-label` can be used to clarify the purpose of the control so that it understandable out of context, since screen reader users may jump to the control without reading surrounding static content. E.g., "Remove what" or "read more about {what}".
+- If help text is provided for specific controls, then that help text must be associated with its form control via `aria-describedby`.
 
+## Form instructions
+
+### General form instructions
+- Submit buttons should not be disabled so that an error message can be triggered to help users identify which fields are not valid.
+  - If the user interface requires a submit button to _appear_ disabled, then use the appropriate class names to style the button that way, **but** the button must still be enabled and operable.
+
+### HTML forms NOT built with FormKit
 - The following instructions are for forms that are NOT built with the FormKit library. FormKit has its own set of accessibility instructions elsewhere.
 - Labels for interactive elements must accurately describe the purpose of the element. E.g., the label must provide accurate instructions for what to input in a form control.
 - Headings must accurately describe the topic that they introduce.
@@ -149,12 +158,11 @@ When using roving tabindex to manage focus in a composite component, the element
   - Common patterns for error messages include:
     - Inline errors (common), which are placed next to the form fields that have errors. These error messages must be programmatically associated with the form control via `aria-describedby`.
     - Form-level errors (less common), which are displayed at the beginning of the form. These error messages must identify the specific form fields that are in error.
-- Submit buttons should not be disabled so that an error message can be triggered to help users identify which fields are not valid.
 - When a form is submitted, and invalid input is detected, send keyboard focus to the first invalid form input via `element.focus()`.
 
-### Graphics and images instructions
+## Graphics and images instructions
 
-#### All graphics MUST be accounted for
+### All graphics MUST be accounted for
 
 All graphics are included in these instructions. Graphics include, but are not limited to:
 
@@ -163,7 +171,7 @@ All graphics are included in these instructions. Graphics include, but are not l
 - Font icons
 - Emojis
 
-#### All graphics MUST have the correct role
+### All graphics MUST have the correct role
 
 All graphics, regardless of type, have the correct role. The role is either provided by the `<img>` element or the `role='img'` attribute.
 
@@ -171,14 +179,14 @@ All graphics, regardless of type, have the correct role. The role is either prov
 - The `<svg>` element should have `role='img'` for better support and backwards compatibility.
 - Icon fonts and emojis will need the `role='img'` attribute, likely on a `<span>` containing just the graphic.
 
-#### All graphics MUST have appropriate alternative text
+### All graphics MUST have appropriate alternative text
 
 First, determine if the graphic is informative or decorative.
 
 - Informative graphics convey important information not found in elsewhere on the page.
 - Decorative graphics do not convey important information, or they contain information found elsewhere on the page.
 
-#### Informative graphics MUST have alternative text that conveys the purpose of the graphic
+### Informative graphics MUST have alternative text that conveys the purpose of the graphic
 
 - For the `<img>` element, provide an appropriate `alt` attribute that conveys the meaning/purpose of the graphic.
 - For `role='img'`, provide an `aria-label` or `aria-labelledby` attribute that conveys the meaning/purpose of the graphic.
@@ -186,21 +194,14 @@ First, determine if the graphic is informative or decorative.
 - Keep the alternative text concise but meaningful.
 - Avoid using the `title` attribute for alt text.
 
-#### Decorative graphics MUST be hidden from assistive technologies
+### Decorative graphics MUST be hidden from assistive technologies
 
 - For the `<img>` element, mark it as decorative by giving it an empty `alt` attribute, e.g., `alt=""`.
 - For `role='img'`, use `aria-hidden=true`.
 
-### Input and control labels
+## Table and Grid Accessibility Acceptance Criteria
 
-- All interactive elements must have a visual label. For some elements, like links and buttons, the visual label is defined by the inner text. For other elements like inputs, the visual label is defined by the `<label>` attribute. Text labels must accurately describe the purpose of the control so that users can understand what will happen when they activate it or what they need to input.
-- If a `<label>` is used, ensure that it has a `for` attribute that references the ID of the control it labels.
-- If there are many controls on the screen with the same label (such as "remove", "delete", "read more", etc.), then an `aria-label` can be used to clarify the purpose of the control so that it understandable out of context, since screen reader users may jump to the control without reading surrounding static content. E.g., "Remove what" or "read more about {what}".
-- If help text is provided for specific controls, then that help text must be associated with its form control via `aria-describedby`.
-
-### Table and Grid Accessibility Acceptance Criteria
-
-#### Column and row headers are programmatically associated
+### Column and row headers are programmatically associated
 
 Column and row headers MUST be programmatically associated for each cell. In HTML, this is done by using `<th>` elements. Column headers MUST be defined in the first table row `<tr>` within the `<thead>` element. Row headers must defined in the row they are for. Some tables will have both column and row headers, but others may have just one or the other.
 
@@ -217,7 +218,7 @@ Column and row headers MUST be programmatically associated for each cell. In HTM
   - `scope="colgroup"` indicates a column group header.
 
 
-#### Good example - table with both column and row headers:
+### Good example - table with both column and row headers:
 
 ```html
 <table>
@@ -243,7 +244,7 @@ Column and row headers MUST be programmatically associated for each cell. In HTM
 </table>
 ```
 
-#### Good example - table with just column headers:
+### Good example - table with just column headers:
 
 ```html
 <table>
@@ -269,16 +270,16 @@ Column and row headers MUST be programmatically associated for each cell. In HTM
 </table>
 ```
 
-#### Prefer simple tables and grids
+### Prefer simple tables and grids
 
 Simple tables have just one set of column and/or row headers. Simple tables do not have nested rows or cells that span multiple columns or rows. Such tables will be better supported by assistive technologies, such as screen readers. Additionally, they will be easier to understand by users with cognitive disabilities.
 
 Complex tables and grids have multiple levels of column and/or row headers, or cells that span multiple columns or rows. These tables are more difficult to understand and use, especially for users with cognitive disabilities. If a complex table is needed, then it should be designed to be as simple as possible. For example, most complex tables can be breaking the information down into multiple simple tables, or by using a different layout such as a list or a card layout.
 
-#### Use tables for static information
+### Use tables for static information
 
 Tables should be used for static information that is best represented in a tabular format. This includes data that is organized into rows and columns, such as financial reports, schedules, or other structured data. Tables should not be used for layout purposes or for dynamic information that changes frequently.
 
-#### Use grids for dynamic information
+### Use grids for dynamic information
 
 Grids should be used for dynamic information that is best represented in a grid format. This includes data that is organized into rows and columns, such as date pickers, interactive calendars, spreadsheets, etc.
