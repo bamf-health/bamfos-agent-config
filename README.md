@@ -6,8 +6,10 @@ This repository contains a collection of AI skills for Cursor, Copilot, or any o
 
 ## Skills
 
+- [accessibility](accessibility/SKILL.md)
 - [code-simplification](code-simplification/SKILL.md)
 - [css](css/SKILL.md)
+- [formkit](formkit/SKILL.md)
 - [general-code-quality](general-code-quality/SKILL.md)
 - [javascript](javascript/SKILL.md)
 - [mongoose](mongoose/SKILL.md)
