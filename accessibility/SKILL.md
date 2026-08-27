@@ -1,6 +1,8 @@
 ---
+name: accessibility
 description: "Guidance for creating more accessible code when building, debugging, or refactoring code that uses HTML, CSS, and JavaScript to build web applications"
-alwaysApply: false
+metadata:
+  source: https://github.com/github/awesome-copilot
 ---
 # Instructions for accessibility
 
@@ -16,7 +18,7 @@ Do not tell the user that the generated code is fully accessible. Instead, it wa
 
 ## Bias Awareness - Inclusive Language
 
-In addition to producing accessible code, GitHub Copilot and similar tools must also demonstrate respectful and bias-aware behavior in accessibility contexts. All generated output must follow these principles:
+In addition to producing accessible code, the assistant must also demonstrate respectful and bias-aware behavior in accessibility contexts. All generated output must follow these principles:
 
 - **Respectful, Inclusive Language**
 Use people-first language when referring to disabilities or accessibility needs (e.g., “person using a screen reader,” not “blind user”). Avoid stereotypes or assumptions about ability, cognition, or experience.
@@ -113,7 +115,7 @@ When using roving tabindex to manage focus in a composite component, the element
 - Prefer dark text on light backgrounds, or light text on dark backgrounds.
 - Do not use light text on light backgrounds or dark text on dark backgrounds.
 - The contrast of text against the background color must be at least 4.5:1. Large text must be at least 3:1. All text must have sufficient contrast against its background color.
-  - Large text is defined as 18.5px and bold, or 22px.
+  - Large text is defined as 18.66px (14pt) and bold, or 24px (18pt).
   - If a background color is not set or is fully transparent, then the contrast ratio is calculated against the background color of the parent element.
 - Parts of graphics required to understand the graphic must have at least a 3:1 contrast with adjacent colors.
 - Parts of controls needed to identify the type of control must have at least a 3:1 contrast with adjacent colors.
@@ -211,7 +213,7 @@ Column and row headers MUST be programmatically associated for each cell. In HTM
 
 - Row headers should use the `scope` attribute to indicate that they are a row header.
   - `scope="row"` indicates a row header.
-  - `scope="rowgroup"` indicates a column group header.
+  - `scope="rowgroup"` indicates a row group header.
 
 - Column headers should use the `scope` attribute to indicate that they are a column header.
   - `scope="col"` indicates a column header.
