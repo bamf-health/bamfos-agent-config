@@ -16,6 +16,7 @@ This repository contains a collection of AI skills for Cursor, Copilot, or any o
 - [nginx](nginx/SKILL.md)
 - [node](node/SKILL.md)
 - [nuxt](nuxt/SKILL.md)
+- [vue](vue/SKILL.md)
 - [ponytail](ponytail/SKILL.md)
 - [security-best-practices](security-best-practices/SKILL.md)
 - [zsh](zsh/SKILL.md)
