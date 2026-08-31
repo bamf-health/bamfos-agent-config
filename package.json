@@ -1,5 +1,5 @@
 {
-  "name": "kswedberg-skills",
+  "name": "bamfos-agent-config",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -7,9 +7,8 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
-  "author": "Karl Swedberg <kswedberg@gmail.com> (https://karlswedberg.com/)",
   "license": "MIT",
-  "packageManager": "pnpm@10.33.2",
+  "packageManager": "pnpm@11.24.0",
   "devDependencies": {
     "@eslint/markdown": "^8.0.1",
     "eslint": "^10.2.1",
