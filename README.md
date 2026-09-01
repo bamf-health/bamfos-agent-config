@@ -1,8 +1,8 @@
 # AI Skills for Cursor, Copilot, or any other AI assistant
 
-This repository contains a collection of AI skills for Cursor, Copilot, or any other AI assistant.
+This repository contains a collection of AI skills for Claude, Cursor, Copilot, or any other AI assistant.
 
-**Note**: These skills are not exhaustive. They are very much a work in progress as I learn more about what I'm doing here.
+**Note**: These skills are are a work in progress and not exhaustive.
 
 ## Skills
 
@@ -16,7 +16,7 @@ This repository contains a collection of AI skills for Cursor, Copilot, or any o
 - [nginx](nginx/SKILL.md)
 - [node](node/SKILL.md)
 - [nuxt](nuxt/SKILL.md)
-- [vue](vue/SKILL.md)
 - [ponytail](ponytail/SKILL.md)
 - [security-best-practices](security-best-practices/SKILL.md)
+- [vue](vue/SKILL.md)
 - [zsh](zsh/SKILL.md)
