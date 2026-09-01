@@ -94,16 +94,24 @@ onMounted(() => {
 
 ### Key Imports
 
+Note: In a Nuxt project, Vue functions are auto-imported.
+
 ```js
 // Reactivity
-import { ref, shallowRef, computed, reactive, readonly, toRef, toRefs, toValue } from 'vue'
+import {ref, shallowRef, computed, reactive, readonly, toRef, toRefs, toValue} from 'vue';
+```
 
+```js
 // Watchers
-import { watch, watchEffect, watchPostEffect, onWatcherCleanup } from 'vue'
+import {watch, watchEffect, watchPostEffect, onWatcherCleanup} from 'vue';
+```
 
+```js
 // Lifecycle
-import { onMounted, onUpdated, onUnmounted, onBeforeMount, onBeforeUpdate, onBeforeUnmount } from 'vue'
+import {onMounted, onUpdated, onUnmounted, onBeforeMount, onBeforeUpdate, onBeforeUnmount} from 'vue';
+```
 
+```js
 // Utilities
-import { nextTick, defineComponent, defineAsyncComponent } from 'vue'
+import {nextTick, defineComponent, defineAsyncComponent} from 'vue';
 ```
