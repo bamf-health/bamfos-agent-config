@@ -1,10 +1,22 @@
-# AI Skills for Cursor, Copilot, or any other AI assistant
+# AI Skills for Claude, Cursor, Copilot, or any other AI assistant
 
 This repository contains a collection of AI skills for Claude, Cursor, Copilot, or any other AI assistant.
 
 **Note**: These skills are are a work in progress and not exhaustive.
 
-## Skills
+## Installation
+
+To install skills from this repository into a project, run the following command and follow the prompts:
+```bash
+npx skills@latest add https://github.com/bamf-health/bamfos-agent-config
+```
+
+To update skills:
+```bash
+npx skills@latest update --project
+```
+
+## Included Skills
 
 - [accessibility](accessibility/SKILL.md)
 - [code-simplification](code-simplification/SKILL.md)
