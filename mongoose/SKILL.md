@@ -208,8 +208,8 @@ Push validation into schema definitions: use `required` with messages, `min`/`ma
 ```javascript
 const userSchema = new Schema(
   {
-    name: { type: String, required: [true, 'Name is required'], minlength: [MIN_LEN, 'Too short'] },
-    status: { type: String, enum: { values: ['draft', 'active'], message: '{VALUE} invalid' } },
+    name: {type: String, required: [true, 'Name is required'], minlength: [MIN_LEN, 'Too short']},
+    status: {type: String, enum: {values: ['draft', 'active'], message: '{VALUE} invalid'}},
   },
   {timestamps: true},
 );

@@ -34,6 +34,7 @@ const factorial = function factorial(n) {
   if (n <= 1) {
     return 1;
   }
+
   return n * factorial(n - 1);
 };
 
@@ -45,12 +46,14 @@ const getUser = () => {
 ### Bad Examples (Function Declarations and improper return syntax)
 
 ```javascript
+/* eslint-disable func-style */
 function toggle() {/* code */}
 
 function factorial(n) {
   if (n <= 1) {
     return 1;
   }
+
   return n * factorial(n - 1);
 }
 
@@ -69,7 +72,7 @@ const getUser = () => ({name: 'John', age: 30});
 
 ### Place shared type definitions in a separate (`.d.ts`) file and import them into the files that need them.
 
-```javascript
+```typescript
 // app/types.d.ts
 export type User = {
   id: string;
@@ -86,16 +89,15 @@ export type User = {
 
 ```javascript
 // app/composables/useUser.js
-import type {User} from './types.d.ts';
 
 /**
  * @param {import('./types.d.ts').User | null} user
  */
-export function useUser(user = null) {
+export const useUser = (user = null) => {
   return {
     user,
   };
-}
+};
 ```
 
 ## Promises

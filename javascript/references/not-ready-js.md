@@ -19,6 +19,7 @@ Use `Iterator.concat(a, b)` instead of a nested `yield*` generator.
 
 ```javascript
 // BAD
+/* eslint-disable func-style */
 function* chained() {
   yield* first();
   yield* second();

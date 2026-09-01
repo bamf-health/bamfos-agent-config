@@ -128,14 +128,16 @@ const subscribe = function(emitter) {
 Load modules only when needed:
 
 ```javascript
+/* eslint-disable */
 let heavyModule = null;
 
 const getHeavyModule = async function() {
-  if (!heavyModule) {
-    const {HeavyModule} = await import('./heavy-module.js');
-
-    heavyModule = new HeavyModule();
+  if (heavyModule) {
+    return heavyModule;
   }
+  const {HeavyModule} = await import('./heavy-module.js');
+
+  heavyModule = new HeavyModule();
 
   return heavyModule;
 };

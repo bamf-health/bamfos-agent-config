@@ -7,7 +7,7 @@ describe('graceful server shutdown', () => {
   let server;
   let isShuttingDown = false;
 
-  function createHandler() {
+  const createHandler = function() {
     /**
      * @param {import('node:http').IncomingMessage} req
      * @param {import('node:http').ServerResponse} res
@@ -33,7 +33,7 @@ describe('graceful server shutdown', () => {
       res.writeHead(200, {'Content-Type': 'application/json'});
       res.end(JSON.stringify({message: 'Hello, World!'}));
     };
-  }
+  };
 
   before(() => {
     server = createServer(createHandler());
@@ -41,17 +41,19 @@ describe('graceful server shutdown', () => {
   });
 
   after(async() => {
-    await new Promise((resolve) => server.close(() => resolve()));
+    await new Promise((resolve) => {
+      server.close(resolve);
+    });
   });
 
-  function getPort() {
+  const getPort = function() {
     const address = server.address();
 
     if (typeof address === 'object' && address !== null) {
       return address.port;
     }
     throw new Error('Server not listening');
-  }
+  };
 
   it('should return healthy status when not shutting down', async() => {
     const port = getPort();

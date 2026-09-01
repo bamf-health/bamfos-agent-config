@@ -46,7 +46,7 @@ import {describe, it} from 'node:test';
 
 describe('EmailService', () => {
   it('should send email via provider', async(t) => {
-    const sendMock = t.mock.fn(async() => ({success: true}));
+    const sendMock = t.mock.fn(() => ({success: true}));
     const provider = {send: sendMock};
     const service = new EmailService(provider);
 
@@ -68,10 +68,12 @@ import {describe, it} from 'node:test';
 
 describe('UserController', () => {
   it('should fetch user from API', async(t) => {
-    t.mock.method(globalThis, 'fetch', async() => ({
-      ok: true,
-      json: async() => ({id: '1', name: 'John'}),
-    }));
+    t.mock.method(globalThis, 'fetch', () => {
+      return {
+        ok: true,
+        json: () => ({id: '1', name: 'John'}),
+      };
+    });
 
     const user = await fetchUser('1');
 

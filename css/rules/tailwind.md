@@ -98,7 +98,7 @@ Tailwind v4 uses CSS-first configuration. Do not create a `tailwind.config.js` f
 ```javascript
 // ❌ NOT NEEDED in Tailwind v4
 module.exports = {
-  content: ["./src/**/*.{js,ts,jsx,tsx}"],
+  content: ['./src/**/*.{js,ts,jsx,tsx}'],
   theme: {
     extend: {},
   },

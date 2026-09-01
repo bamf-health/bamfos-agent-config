@@ -134,8 +134,8 @@ try {
 
 // GOOD
 Promise.try(() => thirdParty.doThing())
-  .then(processResult)
-  .catch(handleAnyFailure);
+.then(processResult)
+.catch(handleAnyFailure);
 ```
 
 ### Collecting an async iterable into an array
@@ -147,7 +147,7 @@ Use `Array.fromAsync`. Never write a manual `for await...of` loop just to push i
 const badAllItems = [];
 
 for await (const item of fetchPages()) {
-  allItems.push(item);
+  badAllItems.push(item);
 }
 
 // GOOD
@@ -164,7 +164,7 @@ Use `RegExp.escape(input)` instead of a custom escape function.
 
 ```javascript
 // BAD: every codebase ships its own buggy version
-const escapeRegex = function (str) {
+const escapeRegex = function(str) {
   return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 };
 

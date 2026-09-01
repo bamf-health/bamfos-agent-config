@@ -22,7 +22,7 @@ import mongoose from 'mongoose';
  * @param {number} amount
  * @returns {Promise<void>}
  */
-async function transferFunds(fromAccountId, toAccountId, amount) {
+const transferFunds = async function(fromAccountId, toAccountId, amount) {
   const session = await mongoose.startSession();
 
   try {
@@ -59,12 +59,12 @@ async function transferFunds(fromAccountId, toAccountId, amount) {
   } finally {
     await session.endSession();
   }
-}
+};
 
 export {transferFunds};
 ```
 
-**Why good:** `withTransaction()` handles commit/abort/retry automatically, `{ session }` passed to every operation, balance check with `$gte` prevents overdraft atomically, `finally` ensures session cleanup, `create()` uses array syntax for session support
+  **Why good:** `withTransaction()` handles commit/abort/retry automatically, `{ session }` passed to every operation, balance check with `$gte` prevents overdraft atomically, `finally` ensures session cleanup, `create()` uses array syntax for session support
 
 ### Bad Example -- Missing Session on Some Operations
 
@@ -89,7 +89,7 @@ await Account.findOneAndUpdate(
 await session.commitTransaction();
 ```
 
-**Why bad:** First update runs outside the transaction and cannot be rolled back, inconsistent state if second update fails, no `endSession()` in finally block
+  **Why bad:** First update runs outside the transaction and cannot be rolled back, inconsistent state if second update fails, no `endSession()` in finally block
 
 ### Bad Example -- Parallel Operations in Transaction
 
@@ -114,7 +114,7 @@ await session.withTransaction(async() => {
 });
 ```
 
-**Why bad:** MongoDB does not support parallel operations within a single transaction session. Operations must be sequential within a transaction.
+  **Why bad:** MongoDB does not support parallel operations within a single transaction session. Operations must be sequential within a transaction.
 
 ---
 
@@ -138,7 +138,7 @@ mongoose.set('transactionAsyncLocalStorage', true);
  * @param {OrderInput} orderData
  * @returns {Promise<void>}
  */
-async function createOrderWithTransaction(orderData) {
+const createOrderWithTransaction = async function(orderData) {
   // connection.transaction() wraps the callback in AsyncLocalStorage
   await mongoose.connection.transaction(async() => {
     // No { session } needed -- automatically propagated via AsyncLocalStorage
@@ -154,7 +154,7 @@ async function createOrderWithTransaction(orderData) {
     });
     // If anything throws, ALL operations are rolled back
   });
-}
+};
 
 export {createOrderWithTransaction};
 ```
@@ -172,7 +172,7 @@ mongoose.set('transactionAsyncLocalStorage', true);
  * @param {string} userId
  * @returns {Promise<void>}
  */
-async function updateWithRollbackSafety(userId) {
+const updateWithRollbackSafety = async function(userId) {
   const user = await User.findById(userId);
 
   if (!user) {
@@ -188,7 +188,7 @@ async function updateWithRollbackSafety(userId) {
   });
   // After successful transaction: user.name is "New Name"
   // After failed transaction: user.name is reverted by Mongoose
-}
+};
 
 export {updateWithRollbackSafety};
 ```
@@ -210,7 +210,7 @@ await User.create({name: 'Alice', email: 'alice@test.com'}, {session});
 // The { session } is treated as a second document, NOT as options
 ```
 
-**Why this matters:** `Model.create(doc, options)` only accepts options when the first argument is an array. With a single object, the second argument is interpreted as another document to create. This is a common transaction bug where the operation appears to work but runs outside the transaction.
+  **Why this matters:** `Model.create(doc, options)` only accepts options when the first argument is an array. With a single object, the second argument is interpreted as another document to create. This is a common transaction bug where the operation appears to work but runs outside the transaction.
 
 ---
 
@@ -234,7 +234,7 @@ const PAGE_SIZE = 20;
  * @param {string} [cursor]
  * @returns {Promise<PaginationResult>}
  */
-async function getUsersWithCursor(cursor) {
+const getUsersWithCursor = async function(cursor) {
   const query = {isActive: true};
 
   if (cursor) {
@@ -253,7 +253,7 @@ async function getUsersWithCursor(cursor) {
   const nextCursor = hasMore ? String(data[data.length - 1]._id) : null;
 
   return {data, nextCursor, hasMore};
-}
+};
 
 export {getUsersWithCursor};
 ```
@@ -286,7 +286,7 @@ const BATCH_LOG_INTERVAL = 1000;
 /**
  * @returns {Promise<number>}
  */
-async function processAllOrders() {
+const processAllOrders = async function() {
   let processed = 0;
 
   const cursor = Order.find({status: 'pending'})
@@ -303,12 +303,12 @@ async function processAllOrders() {
   }
 
   return processed;
-}
+};
 
 export {processAllOrders};
 ```
 
-**Why good:** Cursor-based iteration keeps memory constant regardless of result size, `for await...of` for clean async iteration, progress logging at intervals
+  **Why good:** Cursor-based iteration keeps memory constant regardless of result size, `for await...of` for clean async iteration, progress logging at intervals
 
 ### Bad Example -- Loading Everything into Memory
 
@@ -318,7 +318,7 @@ const orders = await Order.find({status: 'pending'});
 // 1 million pending orders? Out of memory crash
 ```
 
-**Why bad:** Loads entire result set into memory, can crash with OOM for large collections
+  **Why bad:** Loads entire result set into memory, can crash with OOM for large collections
 
 ---
 
@@ -402,4 +402,4 @@ userSchema.index({googleId: 1}, {unique: true, sparse: true});
 
 ---
 
-_For core patterns, see [core.md](core.md). For middleware, see [middleware.md](middleware.md). For population, see [population.md](population.md)._
+  _For core patterns, see [core.md](core.md). For middleware, see [middleware.md](middleware.md). For population, see [population.md](population.md)._

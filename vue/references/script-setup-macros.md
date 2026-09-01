@@ -90,21 +90,27 @@ Two-way binding prop consumed via `v-model`. Available in Vue 3.4+.
 ```js
 // Basic usage - creates "modelValue" prop
 const model = defineModel();
-model.value = 'hello';  // Emits "update:modelValue"
+
+model.value = 'hello'; // Emits "update:modelValue"
 
 // Named model - consumed via v-model:name
-const count = defineModel('count', { default: 0 });
+const count = defineModel('count', {default: 0});
 
 // With modifiers
 const [value, modifiers] = defineModel();
+
 if (modifiers.trim) {
   // Handle trim modifier
 }
 
 // With transformers
-const [value, modifiers] = defineModel({
-  get(val) { return val?.toLowerCase() },
-  set(val) { return modifiers.trim ? val?.trim() : val },
+const [transformedValue, xModifiers] = defineModel({
+  get(val) {
+    return val?.toLowerCase();
+  },
+  set(val) {
+    return xModifiers.trim ? val?.trim() : val;
+  },
 });
 ```
 

@@ -102,6 +102,7 @@ describe('Debug hanging tests', () => {
 **Symptom**: Test passes locally but fails in CI, or fails randomly.
 
 ```javascript
+/* eslint-disable no-promise-executor-return */
 // BAD - Race condition with setTimeout
 it('should process after delay', async(t) => {
   let processed = false;
@@ -241,6 +242,7 @@ it('test 2: find user', async(t) => {
 **Symptom**: Test appears to pass but process exits with error, or random failures.
 
 ```javascript
+/* eslint-disable require-await */
 // BAD - Fire-and-forget async operation
 it('should send notification', async(t) => {
   sendNotification(user); // Not awaited - may reject after test ends
@@ -329,6 +331,7 @@ it('flaky test', async(t) => {
 ### 5. Check for Async Leaks
 
 ```javascript
+/* eslint-disable require-await */
 import {describe, it, after} from 'node:test';
 
 describe('async leak detection', () => {
@@ -341,7 +344,7 @@ describe('async leak detection', () => {
   });
 
   it('should not leak', async(t) => {
-    const timer = setTimeout(() => {}, 10000);
+    const timer = setTimeout(() => {/* noop */}, 10000);
 
     activeHandles.add(timer);
 
@@ -370,9 +373,9 @@ const deterministicId = `test-user-${t.name}`;
 ```javascript
 it('should fetch user', async(t) => {
   // Mock fetch to avoid network flakiness
-  t.mock.method(globalThis, 'fetch', async() => ({
+  t.mock.method(globalThis, 'fetch', () => ({
     ok: true,
-    json: async() => ({id: '1', name: 'John'}),
+    json: () => ({id: '1', name: 'John'}),
   }));
 
   const user = await fetchUser('1');
@@ -384,6 +387,7 @@ it('should fetch user', async(t) => {
 ### 3. Use Explicit Waits Instead of Timeouts
 
 ```javascript
+/* eslint-disable */
 // BAD - Arbitrary timeout
 await new Promise((r) => setTimeout(r, 1000));
 
@@ -455,9 +459,9 @@ Mock external APIs in tests to avoid network-related flakiness:
 
 ```javascript
 // Always mock external HTTP calls in unit tests
-t.mock.method(globalThis, 'fetch', async(url) => {
+t.mock.method(globalThis, 'fetch', (url) => {
   if (url.includes('api.external.com')) {
-    return {ok: true, json: async() => mockData};
+    return {ok: true, json: () => mockData};
   }
   throw new Error(`Unmocked URL: ${url}`);
 });

@@ -72,9 +72,9 @@ Use it for diagnostics only; gate noisy output behind an environment flag in CI.
 ### Step sequence
 
 1. Reproduce with:
-   ```bash
-   node --test --test-reporter=spec --test-timeout=15000
-   ```
+```bash
+node --test --test-reporter=spec --test-timeout=15000
+```
 2. Isolate to one test using `--test-name-pattern`.
 3. Run with `--import why-is-node-running/include` and send `SIGUSR1`.
 4. Patch teardown where resource is created.
@@ -85,7 +85,7 @@ Use it for diagnostics only; gate noisy output behind an environment flag in CI.
 ```javascript
 it('serves requests', async() => {
   const server = await startServer({port: 0});
-  const id = setInterval(() => {}, 1000);
+  const id = setInterval(() => {/* noop */}, 1000);
   // test body...
   // ❌ no deterministic teardown
 });
@@ -98,7 +98,7 @@ import {once} from 'node:events';
 
 it('serves requests', async(t) => {
   const server = await startServer({port: 0});
-  const id = setInterval(() => {}, 1000);
+  const id = setInterval(() => {/* noop */}, 1000);
 
   t.after(async() => {
     clearInterval(id);

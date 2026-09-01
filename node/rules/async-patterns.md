@@ -12,6 +12,7 @@ metadata:
 Use async/await over raw Promises for readability:
 
 ```js
+/* eslint-disable */
 // GOOD
 const processItems = async function(items) {
   const results = [];
@@ -40,7 +41,7 @@ const processItemsWithChains = function(items) {
 Use Promise.all for independent operations:
 
 ```js
-const fetchAllData = async function(ids) {
+const fetchAllData = function(ids) {
   const promises = ids.map((id) => fetchData(id));
   return Promise.all(promises);
 };

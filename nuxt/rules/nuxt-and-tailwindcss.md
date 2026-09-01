@@ -22,8 +22,8 @@ If the project is using Tailwind, ensure Tailwind is imported into Vue component
 Place the following code in a file called `vite/tailwind-reference-plugin.js`:
 
 ```javascript
-import { resolve } from "node:path";
-import { createFilter } from "vite";
+import {resolve} from 'node:path';
+import {createFilter} from 'vite';
 
 /**
  * A callback that determines which "@reference" should be added by the tailwindAutoReference plugin.
@@ -49,8 +49,7 @@ const defaultOpts = {
   skip: () => false,
 };
 
-const resolveFn = (fn, ...args) =>
-  Promise.resolve(fn instanceof Function ? fn(args) : fn);
+const resolveFn = (fn, ...args) => Promise.resolve(fn instanceof Function ? fn(args) : fn);
 
 /**
  * Applies the `@reference` directive to vue files that use `@apply` in their styles.
@@ -64,38 +63,37 @@ const resolveFn = (fn, ...args) =>
  * @returns {import('vite').Plugin} - The plugin configuration object for Vite.
  */
 export const tailwindReferencePlugin = (
-  cssFile = "assets/css/main.css",
+  cssFile = 'assets/css/main.css',
   opts = {},
 ) => {
-  const { include, exclude, skip } = { ...defaultOpts, ...opts };
+  const {include, exclude, skip} = {...defaultOpts, ...opts};
   let root, fileFilter;
 
-  const getReferenceStr = (reference) =>
-    (Array.isArray(reference) ? reference : [reference]).reduce(
-      (acc, file) => `${acc}\n@reference "${resolve(root, file)}";`,
-      "",
-    );
+  const getReferenceStr = (reference) => (Array.isArray(reference) ? reference : [reference]).reduce(
+    (acc, file) => `${acc}\n@reference "${resolve(root, file)}";`,
+    '',
+  );
 
   return {
-    name: "tailwind-reference-plugin",
-    enforce: "pre",
+    name: 'tailwind-reference-plugin',
+    enforce: 'pre',
     configResolved: (config) => {
       root = config.root;
-      fileFilter = createFilter(include, exclude, { resolve: root });
+      fileFilter = createFilter(include, exclude, {resolve: root});
     },
-    transform: async (code, id) => {
+    transform: async(code, id) => {
       if (!fileFilter(id)) {
         return null;
       }
       const hasTailwindDirective =
-        code.includes("@apply ") || code.includes("@variant ");
+        code.includes('@apply ') || code.includes('@variant ');
 
       if (!hasTailwindDirective || skip(code, id)) {
         return null;
       }
 
       const lastUseMatch = [...code.matchAll(/^\s*@use.*\n/gm)].at(-1);
-      const map = { mappings: "" };
+      const map = {mappings: ''};
 
       if (!lastUseMatch) {
         return {

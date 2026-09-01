@@ -27,7 +27,7 @@ const userSchema = new Schema({
 // Hash password only when modified -- Mongoose 9: async, no next()
 userSchema.pre('save', async function() {
   if (this.isModified('password')) {
-    // this.password = await bcrypt.hash(this.password, SALT_ROUNDS);
+    this.password = await bcrypt.hash(this.password, SALT_ROUNDS);
   }
 });
 
@@ -44,7 +44,7 @@ const User = model('User', userSchema);
 export {User};
 ```
 
-**Why good:** `isModified()` check prevents re-hashing on every save, Mongoose 9 async pattern (no `next()` callback), middleware defined before `model()` call
+  **Why good:** `isModified()` check prevents re-hashing on every save, Mongoose 9 async pattern (no `next()` callback), middleware defined before `model()` call
 
 ### Good Example -- Capturing isNew in Post-Save
 
@@ -65,7 +65,7 @@ userSchema.post('save', (doc) => {
 });
 ```
 
-**Why good:** `$locals` persists data between pre and post hooks on the same operation, solves the `isNew` gotcha where it's always false in post-save
+  **Why good:** `$locals` persists data between pre and post hooks on the same operation, solves the `isNew` gotcha where it's always false in post-save
 
 ### Bad Example -- Middleware After model()
 
@@ -79,7 +79,7 @@ userSchema.pre('save', function() {
 // No error thrown -- this hook will never execute
 ```
 
-**Why bad:** Middleware registered after `model()` compilation is silently ignored. No error, no warning -- data integrity silently broken.
+  **Why bad:** Middleware registered after `model()` compilation is silently ignored. No error, no warning -- data integrity silently broken.
 
 ### Bad Example -- Using next() on Mongoose 9
 
@@ -93,7 +93,7 @@ userSchema.pre('save', function(next) {
 });
 ```
 
-**Why bad:** Mongoose 9 removed `next()` callback from pre hooks. Use async/await or return a Promise instead.
+  **Why bad:** Mongoose 9 removed `next()` callback from pre hooks. Use async/await or return a Promise instead.
 
 ---
 
@@ -152,7 +152,7 @@ userSchema.pre('countDocuments', function() {
 });
 ```
 
-**Why good:** Consistent soft-delete filtering across all read operations, no application code needed to remember the filter
+  **Why good:** Consistent soft-delete filtering across all read operations, no application code needed to remember the filter
 
 ### Good Example -- Query Logging
 
@@ -173,7 +173,7 @@ userSchema.post('find', function(_docs) {
 });
 ```
 
-**Why good:** Named constant for threshold, measures actual query execution time, logs only slow queries with their filters
+  **Why good:** Named constant for threshold, measures actual query execution time, logs only slow queries with their filters
 
 ---
 
@@ -192,7 +192,7 @@ userSchema.post('find', function(_docs) {
  * Add soft-delete fields, query filters, and instance methods to a schema.
  * @param {import('mongoose').Schema} schema
  */
-function applySoftDelete(schema) {
+const applySoftDelete = function(schema) {
   schema.add({
     deletedAt: {type: Date, default: null},
     deletedBy: {type: String, default: null},
@@ -221,20 +221,20 @@ function applySoftDelete(schema) {
    * Soft-delete this document.
    * @param {string} [deletedBy]
    */
-  schema.methods.softDelete = async function(deletedBy) {
+  schema.methods.softDelete = function(deletedBy) {
     this.deletedAt = new Date();
     this.deletedBy = deletedBy ?? null;
 
     return this.save();
   };
 
-  schema.methods.restore = async function() {
+  schema.methods.restore = function() {
     this.deletedAt = null;
     this.deletedBy = null;
 
     return this.save();
   };
-}
+};
 
 export {applySoftDelete};
 
@@ -279,7 +279,7 @@ userSchema.pre('save', () => {
 4. post('save')     -- document successfully written
 ```
 
-**Key insight:** `save()` automatically triggers `validate()` first. All `pre('validate')` and `post('validate')` hooks run before any `pre('save')` hook.
+  **Key insight:** `save()` automatically triggers `validate()` first. All `pre('validate')` and `post('validate')` hooks run before any `pre('save')` hook.
 
 ---
 
@@ -289,4 +289,4 @@ See [reference.md](../reference.md#middleware-execution-matrix) for the complete
 
 ---
 
-_For core patterns, see [core.md](core.md). For population, see [population.md](population.md). For transactions, see [transactions.md](transactions.md)._
+  _For core patterns, see [core.md](core.md). For population, see [population.md](population.md). For transactions, see [transactions.md](transactions.md)._

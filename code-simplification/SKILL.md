@@ -66,32 +66,35 @@ Explicit code is better than compact code when the compact version requires a me
 
 ```javascript
 // UNCLEAR: Dense ternary chain
+// eslint-disable-next-line no-nested-ternary
 const label = isNew ? 'New' : isUpdated ? 'Updated' : isArchived ? 'Archived' : 'Active';
 
 // CLEAR: Readable mapping
-function getStatusLabel(item) {
+const getStatusLabel = function(item) {
   if (item.isNew) {
     return 'New';
   }
   if (item.isUpdated) {
-    return 'Updated'
+    return 'Updated';
   }
   if (item.isArchived) {
-    return 'Archived'
+    return 'Archived';
   }
+
   return 'Active';
-}
+};
 ```
 
 ```javascript
 // UNCLEAR: Chained reduces with inline logic
 const result = items.reduce((acc, item) => ({
   ...acc,
-  [item.id]: { ...acc[item.id], count: (acc[item.id]?.count ?? 0) + 1 }
+  [item.id]: {...acc[item.id], count: (acc[item.id]?.count ?? 0) + 1},
 }), {});
 
 // CLEAR: Named intermediate step
 const countById = new Map();
+
 for (const item of items) {
   countById.set(item.id, (countById.get(item.id) ?? 0) + 1);
 }
@@ -197,51 +200,76 @@ If the "simplified" version is harder to understand or review, revert. Not every
 
 ### TypeScript / JavaScript
 
-```javascript
-// SIMPLIFY: Unnecessary async wrapper
-// Before
-async function getUser(id) {
-  return await userService.findById(id);
-}
-// After
-function getUser(id) {
-  return userService.findById(id);
-}
+SIMPLIFY: Unnecessary async wrapper
 
-// SIMPLIFY: Verbose conditional assignment
+```javascript
+// Before
+const getUser = async function(id) {
+  return await userService.findById(id);
+};
+```
+
+```javascript
+// After
+const getUser = function(id) {
+  return userService.findById(id);
+};
+```
+
+SIMPLIFY: Verbose conditional assignment
+
+```javascript
 // Before
 let displayName;
+
 if (user.nickname) {
   displayName = user.nickname;
 } else {
   displayName = user.fullName;
 }
+```
+
+```javascript
 // After
 const displayName = user.nickname || user.fullName;
+```
 
-// SIMPLIFY: Manual array building
+SIMPLIFY: Manual array building
+
+```javascript
 // Before
 const activeUsers = [];
+
 for (const user of users) {
   if (user.isActive) {
     activeUsers.push(user);
   }
 }
+```
+
+```javascript
 // After
 const activeUsers = users.filter((user) => user.isActive);
+```
 
-// SIMPLIFY: Redundant boolean return
+SIMPLIFY: Redundant boolean return
+
+```javascript
 // Before
-function isValid(input) {
+const isValid = function(input) {
   if (input.length > 0 && input.length < 100) {
     return true;
   }
+
   return false;
-}
+};
+```
+
+```javascript
 // After
-function isValid(input) {
+const isValid = function(input) {
   return input.length && input.length < 100;
-}
+};
 ```
 
 ## Common Rationalizations

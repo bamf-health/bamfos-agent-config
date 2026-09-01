@@ -8,7 +8,7 @@ import closeWithGrace from 'close-with-grace';
 
 let isShuttingDown = false;
 
-function createHandler() {
+const createHandler = function() {
   /**
    * @param {import('node:http').IncomingMessage} req
    * @param {import('node:http').ServerResponse} res
@@ -37,10 +37,10 @@ function createHandler() {
     res.writeHead(200, {'Content-Type': 'application/json'});
     res.end(JSON.stringify({message: 'Hello, World!'}));
   };
-}
+};
 
 /** @param {import('node:http').Server} server */
-function closeServer(server) {
+const closeServer = function(server) {
   return new Promise((resolve, reject) => {
     // Close idle connections immediately
     server.closeIdleConnections();
@@ -59,9 +59,9 @@ function closeServer(server) {
       server.closeAllConnections();
     }, 5000);
   });
-}
+};
 
-export async function main() {
+export const main = function() {
   const server = createServer(createHandler());
 
   server.listen(3000, '0.0.0.0', () => {
@@ -79,7 +79,7 @@ export async function main() {
     await closeServer(server);
     console.log('Server closed successfully');
   });
-}
+};
 
 // Run if executed directly
 const isMain = process.argv[1]?.endsWith('graceful-server.mjs') ?? false;

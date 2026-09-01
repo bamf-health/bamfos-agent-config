@@ -32,7 +32,7 @@ const post = await BlogPost.findById(id)
 .lean();
 ```
 
-**Why good:** Field selection on every populate call reduces data transfer, limit on nested array prevents unbounded results, nested populate for deep references, sorted by recency
+  **Why good:** Field selection on every populate call reduces data transfer, limit on nested array prevents unbounded results, nested populate for deep references, sorted by recency
 
 ### Good Example -- Conditional Population
 
@@ -49,7 +49,7 @@ const POPULATED_COMMENT_LIMIT = 20;
  * @param {string} id
  * @param {PopulateConfig} [config]
  */
-async function getPost(id, config = {}) {
+const getPost = function(id, config = {}) {
   let query = BlogPost.findById(id);
 
   if (config.includeAuthor) {
@@ -65,12 +65,12 @@ async function getPost(id, config = {}) {
   }
 
   return query.lean();
-}
+};
 
 export {getPost};
 ```
 
-**Why good:** Populate only when needed (each populate is a separate DB query), chainable query builder, avoids unnecessary round-trips, named constant for the comment limit
+  **Why good:** Populate only when needed (each populate is a separate DB query), chainable query builder, avoids unnecessary round-trips, named constant for the comment limit
 
 ### Bad Example -- Unbounded Populate
 
@@ -84,7 +84,7 @@ const post = await BlogPost.findById(id)
 // Each populate is a separate DB query with no bounds
 ```
 
-**Why bad:** No field selection wastes bandwidth and memory, no limit on comments could return thousands of documents, each populate adds a database round-trip
+  **Why bad:** No field selection wastes bandwidth and memory, no limit on comments could return thousands of documents, each populate adds a database round-trip
 
 ---
 
@@ -182,7 +182,7 @@ const User = model('User', userSchema);
 export {User};
 ```
 
-**Why good:** Schema options enable virtuals in JSON/object serialization (otherwise they're invisible in API responses), getter + setter for two-way virtual, multiple computed virtuals
+  **Why good:** Schema options enable virtuals in JSON/object serialization (otherwise they're invisible in API responses), getter + setter for two-way virtual, multiple computed virtuals
 
 ### Important Gotcha
 
@@ -199,7 +199,7 @@ const doc = await Model.findById(id);
 JSON.stringify(doc); // { firstName: "John", lastName: "Doe" } -- no fullName!
 ```
 
-**Why bad:** Virtual properties are excluded from `toJSON()`/`toObject()` by default. Must set `{ toJSON: { virtuals: true } }` in schema options.
+  **Why bad:** Virtual properties are excluded from `toJSON()`/`toObject()` by default. Must set `{ toJSON: { virtuals: true } }` in schema options.
 
 ---
 
@@ -297,7 +297,7 @@ const User = model('User', userSchema);
 export {User};
 ```
 
-**Why good:** Addresses always accessed with user, bounded (few per user), never shared between users, single read fetches everything
+  **Why good:** Addresses always accessed with user, bounded (few per user), never shared between users, single read fetches everything
 
 ### Good Example -- Referencing (Independent, Unbounded Data)
 
@@ -323,7 +323,7 @@ const Post = model('Post', postSchema);
 export {Post};
 ```
 
-**Why good:** Posts grow without limit, accessed independently, can be queried/paginated without loading the user, index on `authorId` for efficient lookups
+  **Why good:** Posts grow without limit, accessed independently, can be queried/paginated without loading the user, index on `authorId` for efficient lookups
 
 ### Good Example -- Denormalization (Hybrid Pattern)
 
@@ -363,7 +363,7 @@ const orderSchema = new Schema(
 export {orderSchema};
 ```
 
-**Why good:** Customer snapshot avoids populate on every order read, product price captured at order time (won't change if product price changes later), full customer data available via `customerId` when needed
+  **Why good:** Customer snapshot avoids populate on every order read, product price captured at order time (won't change if product price changes later), full customer data available via `customerId` when needed
 
 ### Bad Example -- Embedding Unbounded Data
 
@@ -381,7 +381,7 @@ const userSchema = new Schema({
 });
 ```
 
-**Why bad:** Posts grow unbounded and hit 16 MB document size limit, deeply nested comments make querying impossible, updating one post requires reading/writing the entire user document
+  **Why bad:** Posts grow unbounded and hit 16 MB document size limit, deeply nested comments make querying impossible, updating one post requires reading/writing the entire user document
 
 ---
 

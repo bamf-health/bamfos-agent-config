@@ -21,7 +21,7 @@ const SOCKET_TIMEOUT_MS = 45000;
 /**
  * @returns {Promise<typeof mongoose>}
  */
-async function connectDatabase() {
+const connectDatabase = async function() {
   const uri = process.env.MONGODB_URI;
 
   if (!uri) {
@@ -45,17 +45,17 @@ async function connectDatabase() {
     console.error('Failed to connect to MongoDB:', error);
     throw error;
   }
-}
+};
 
 export {connectDatabase};
 ```
 
-**Why good:** Environment variable for URI, named constants for all numeric values, try/catch for initial connection, JSDoc-documented return type
+  **Why good:** Environment variable for URI, named constants for all numeric values, try/catch for initial connection, JSDoc-documented return type
 
 ### Good Example -- Connection Events and Graceful Shutdown
 
 ```javascript
-function setupConnectionEvents() {
+const setupConnectionEvents = function() {
   mongoose.connection.on('connected', () => {
     console.log('MongoDB connected');
   });
@@ -67,12 +67,12 @@ function setupConnectionEvents() {
   mongoose.connection.on('disconnected', () => {
     console.warn('MongoDB disconnected');
   });
-}
+};
 
-async function disconnectDatabase() {
+const disconnectDatabase = async function() {
   await mongoose.connection.close();
   console.log('MongoDB connection closed');
-}
+};
 
 process.on('SIGINT', async() => {
   await disconnectDatabase();
@@ -82,7 +82,7 @@ process.on('SIGINT', async() => {
 export {setupConnectionEvents, disconnectDatabase};
 ```
 
-**Why good:** Handles all critical lifecycle events, different log levels for severity, graceful shutdown on SIGINT
+  **Why good:** Handles all critical lifecycle events, different log levels for severity, graceful shutdown on SIGINT
 
 ### Good Example -- Multiple Connections (Multi-Database)
 
@@ -105,7 +105,7 @@ const AnalyticsEvent = analyticsDb.model('AnalyticsEvent', eventSchema);
 export {User, AnalyticsEvent};
 ```
 
-**Why good:** Separate pools for different workloads, `.asPromise()` for await support, models explicitly bound to connections
+  **Why good:** Separate pools for different workloads, `.asPromise()` for await support, models explicitly bound to connections
 
 ### Bad Example -- Hardcoded Connection
 
@@ -114,7 +114,7 @@ export {User, AnalyticsEvent};
 mongoose.connect('mongodb://admin:password123@localhost:27017/mydb');
 ```
 
-**Why bad:** Hardcoded credentials in source code, `localhost` fails on Node.js 18+ (IPv6 preference), no pool configuration, no error handling
+  **Why bad:** Hardcoded credentials in source code, `localhost` fails on Node.js 18+ (IPv6 preference), no pool configuration, no error handling
 
 ---
 
@@ -244,7 +244,7 @@ const userSchema = new Schema({
 
 ## Pattern 3: Documenting Schemas with JSDoc
 
-Mongoose does not require types at runtime, but documenting your schemas with JSDoc gives editors and tooling useful intellisense without the overhead of TypeScript. Define a `@typedef` per document shape and reference it from the functions and methods that consume documents.
+  Mongoose does not require types at runtime, but documenting your schemas with JSDoc gives editors and tooling useful intellisense without the overhead of TypeScript. Define a `@typedef` per document shape and reference it from the functions and methods that consume documents.
 
 ### Good Example -- Simple Model with JSDoc
 
@@ -282,7 +282,7 @@ const BlogPost = model('BlogPost', blogPostSchema);
 export {BlogPost, blogPostSchema};
 ```
 
-**Why good:** No type duplication at runtime, JSDoc `@typedef` documents the shape for editors, optional fields marked with `[brackets]`, ObjectId references use the `Types.ObjectId` runtime type
+  **Why good:** No type duplication at runtime, JSDoc `@typedef` documents the shape for editors, optional fields marked with `[brackets]`, ObjectId references use the `Types.ObjectId` runtime type
 
 ### Good Example -- Methods, Statics, and Virtuals (JSDoc-Annotated)
 
@@ -333,8 +333,9 @@ const userSchema = new Schema(
  * @param {string} candidate
  * @returns {Promise<boolean>}
  */
+/* eslint-disable require-await */
 userSchema.methods.comparePassword = async function(candidate) {
-  // Use bcrypt.compare(candidate, this.passwordHash) in production
+  // IMPORTANT: Use bcrypt.compare(candidate, this.passwordHash) in production
   return candidate === this.passwordHash;
 };
 
@@ -362,9 +363,10 @@ userSchema.statics.findByEmail = function(email) {
 };
 
 // Middleware -- MUST be defined BEFORE model()
+/* eslint-disable require-await */
 userSchema.pre('save', async function() {
   if (this.isModified('passwordHash')) {
-    // Hash password here (e.g., bcrypt.hash(this.passwordHash, SALT_ROUNDS))
+    // IMPORTANT: Hash password here (e.g., bcrypt.hash(this.passwordHash, SALT_ROUNDS))
   }
 });
 
@@ -374,7 +376,7 @@ const User = model('User', userSchema);
 export {User, userSchema};
 ```
 
-**Why good:** JSDoc `@typedef` and `@this` annotations give editor intellisense without compile-time overhead, password is excluded from JSON output, middleware registered before `model()`, named constants for tunable values
+  **Why good:** JSDoc `@typedef` and `@this` annotations give editor intellisense without compile-time overhead, password is excluded from JSON output, middleware registered before `model()`, named constants for tunable values
 
 ### Bad Example -- Undocumented, Unconstrained Schema
 
@@ -386,7 +388,7 @@ const productSchema = new Schema({
 });
 ```
 
-**Why bad:** No `required` constraints, no validation, and no JSDoc means editors cannot infer the document shape and consumers cannot tell what is mandatory
+  **Why bad:** No `required` constraints, no validation, and no JSDoc means editors cannot infer the document shape and consumers cannot tell what is mandatory
 
 ---
 
@@ -482,7 +484,7 @@ const activeAdmins = await User.find({role: 'admin', isActive: true})
 .lean();
 ```
 
-**Why good:** `.lean()` for read-only responses (3x memory savings), `.select()` for projection, named constant for page size
+  **Why good:** `.lean()` for read-only responses (3x memory savings), `.select()` for projection, named constant for page size
 
 ### Good Example -- Update
 
@@ -509,7 +511,7 @@ await User.updateMany(
 );
 ```
 
-**Why good:** `save()` when middleware matters, `{ new: true }` returns updated document, `{ runValidators: true }` enforces schema validation on direct updates
+  **Why good:** `save()` when middleware matters, `{ new: true }` returns updated document, `{ runValidators: true }` enforces schema validation on direct updates
 
 ### Good Example -- Delete
 
@@ -533,7 +535,7 @@ user.name = 'Updated';
 await user.save(); // TypeError: user.save is not a function
 ```
 
-**Why bad:** `.lean()` returns plain JavaScript objects without Mongoose methods. Cannot call `.save()`, `.populate()`, or any instance method.
+  **Why bad:** `.lean()` returns plain JavaScript objects without Mongoose methods. Cannot call `.save()`, `.populate()`, or any instance method.
 
 ### Bad Example -- Missing runValidators
 
@@ -544,7 +546,7 @@ await User.findByIdAndUpdate(id, {
 });
 ```
 
-**Why bad:** `findByIdAndUpdate` skips schema validation by default. Always pass `{ runValidators: true }` to enforce validation on direct updates.
+  **Why bad:** `findByIdAndUpdate` skips schema validation by default. Always pass `{ runValidators: true }` to enforce validation on direct updates.
 
 ---
 
@@ -577,4 +579,4 @@ export {auditLogSchema};
 
 ---
 
-_For middleware patterns, see [middleware.md](middleware.md). For population, see [population.md](population.md). For transactions, see [transactions.md](transactions.md)._
+  _For middleware patterns, see [middleware.md](middleware.md). For population, see [population.md](population.md). For transactions, see [transactions.md](transactions.md)._

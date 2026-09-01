@@ -24,13 +24,13 @@ node --env-file=.env --env-file=.env.local app.js
 Load environment files programmatically with `process.loadEnvFile()`:
 
 ```javascript
-import { loadEnvFile } from "node:process";
+import {loadEnvFile} from 'node:process';
 
 // Load .env from current directory
 loadEnvFile();
 
 // Load specific file
-loadEnvFile(".env.local");
+loadEnvFile('.env.local');
 ```
 
 ## Environment Variables Validation
@@ -40,20 +40,20 @@ loadEnvFile(".env.local");
 Use [Zod](https://github.com/colinhacks/zod) for validation:
 
 ```javascript
-import { z } from "zod";
+import {z} from 'zod';
 
 const EnvSchema = z.object({
   PORT: z.coerce.number().default(3000),
   DATABASE_URL: z.string().url(),
   API_KEY: z.string().min(1),
-  LOG_LEVEL: z.enum(["debug", "info", "warn", "error"]).default("info"),
+  LOG_LEVEL: z.enum(['debug', 'info', 'warn', 'error']).default('info'),
 });
 
-const loadEnv = function () {
+const loadEnv = function() {
   const result = EnvSchema.safeParse(process.env);
 
   if (!result.success) {
-    console.error("Invalid environment variables:");
+    console.error('Invalid environment variables:');
     console.error(result.error.format());
     process.exit(1);
   }
@@ -77,7 +77,7 @@ This leads to problems:
 
 ```javascript
 // BAD - NODE_ENV conflates concerns
-if (process.env.NODE_ENV === "development") {
+if (process.env.NODE_ENV === 'development') {
   enableDebugLogging(); // logging concern
   disableRateLimiting(); // security concern
   useMockDatabase(); // infrastructure concern
@@ -90,12 +90,12 @@ Instead, use explicit environment variables for each concern:
 // GOOD - explicit variables for each concern
 const config = {
   logging: {
-    level: process.env.LOG_LEVEL || "info",
-    pretty: process.env.LOG_PRETTY === "true",
+    level: process.env.LOG_LEVEL || 'info',
+    pretty: process.env.LOG_PRETTY === 'true',
   },
   security: {
-    rateLimitEnabled: process.env.RATE_LIMIT_ENABLED !== "false",
-    httpsOnly: process.env.HTTPS_ONLY === "true",
+    rateLimitEnabled: process.env.RATE_LIMIT_ENABLED !== 'false',
+    httpsOnly: process.env.HTTPS_ONLY === 'true',
   },
   database: {
     url: process.env.DATABASE_URL,
@@ -124,7 +124,7 @@ Create a typed configuration object:
  */
 
 /** @param {string} name */
-const requireEnv = function (name) {
+const requireEnv = function(name) {
   const value = process.env[name];
 
   if (!value) {
@@ -135,23 +135,23 @@ const requireEnv = function (name) {
 };
 
 /** @returns {Config} */
-const createConfig = function () {
+const createConfig = function() {
   return {
     server: {
-      port: parseInt(process.env.PORT || "3000", 10),
-      host: process.env.HOST || "0.0.0.0",
+      port: parseInt(process.env.PORT || '3000', 10),
+      host: process.env.HOST || '0.0.0.0',
     },
     database: {
-      url: requireEnv("DATABASE_URL"),
-      poolSize: parseInt(process.env.DB_POOL_SIZE || "10", 10),
+      url: requireEnv('DATABASE_URL'),
+      poolSize: parseInt(process.env.DB_POOL_SIZE || '10', 10),
     },
     auth: {
-      jwtSecret: requireEnv("JWT_SECRET"),
-      jwtExpiresIn: process.env.JWT_EXPIRES_IN || "1h",
+      jwtSecret: requireEnv('JWT_SECRET'),
+      jwtExpiresIn: process.env.JWT_EXPIRES_IN || '1h',
     },
     features: {
-      enableMetrics: process.env.ENABLE_METRICS === "true",
-      enableTracing: process.env.ENABLE_TRACING === "true",
+      enableMetrics: process.env.ENABLE_METRICS === 'true',
+      enableTracing: process.env.ENABLE_TRACING === 'true',
     },
   };
 };
@@ -188,13 +188,13 @@ Implement feature flags via environment:
 
 ```javascript
 const features = {
-  newDashboard: process.env.FEATURE_NEW_DASHBOARD === "true",
-  betaApi: process.env.FEATURE_BETA_API === "true",
-  darkMode: process.env.FEATURE_DARK_MODE === "true",
+  newDashboard: process.env.FEATURE_NEW_DASHBOARD === 'true',
+  betaApi: process.env.FEATURE_BETA_API === 'true',
+  darkMode: process.env.FEATURE_DARK_MODE === 'true',
 };
 
 /** @param {'newDashboard' | 'betaApi' | 'darkMode'} feature */
-export const isFeatureEnabled = function (feature) {
+export const isFeatureEnabled = function(feature) {
   return features[feature] ?? false;
 };
 ```

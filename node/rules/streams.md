@@ -57,6 +57,7 @@ const processFile = async function(input, output) {
 For ingestion-style tasks, show an explicit `async function*` transform and integrate deduped async lookups:
 
 ```javascript
+/* eslint-disable no-await-in-loop */
 import {pipeline} from 'node:stream/promises';
 import {createReadStream, createWriteStream} from 'node:fs';
 import {createCache} from 'async-cache-dedupe';
@@ -192,6 +193,7 @@ const stream = Readable.from(generateData());
 Respect backpressure signals using `once` from events:
 
 ```javascript
+/* eslint-disable no-await-in-loop */
 import {Writable} from 'node:stream';
 import {once} from 'node:events';
 
@@ -219,12 +221,12 @@ import {Readable} from 'node:stream';
  * @param {import('node:stream').Readable} stream
  * @returns {Promise<T>}
  */
-const readStreamAsJson = async function(stream) {
+const readStreamAsJson = function(stream) {
   return json(stream);
 };
 
 /** @param {import('node:stream').Readable} stream */
-const readStreamAsText = async function(stream) {
+const readStreamAsText = function(stream) {
   return text(stream);
 };
 ```

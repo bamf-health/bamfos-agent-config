@@ -60,7 +60,7 @@ closeWithGrace({delay: 15000}, async({signal, err}) => {
 
   // Close in reverse order of initialization
   await new Promise((resolve) => {
-    return server.close(resolve);
+    server.close(resolve);
   });
   console.log('HTTP server closed');
 
@@ -77,6 +77,7 @@ closeWithGrace({delay: 15000}, async({signal, err}) => {
 Implement health checks that respect shutdown state:
 
 ```javascript
+/* eslint-disable no-promise-executor-return */
 import closeWithGrace from 'close-with-grace';
 import {createServer} from 'node:http';
 
@@ -113,7 +114,7 @@ const server = createServer((req, res) => {
 server.listen(3000);
 
 const cleanup = async function() {
-  await new Promise((resolve) => server.close(() => resolve()));
+  await new Promise((resolve) => server.close(resolve));
 };
 
 closeWithGrace({delay: 10000}, async({signal}) => {
