@@ -8,6 +8,8 @@ metadata:
 
 # Vue
 
+> For Nuxt apps, use [vue-nuxt](../vue-nuxt/SKILL.md) instead. This directory is kept as reference.
+
 > Based on Vue 3.5. Always use Composition API with `<script setup>`.
 
 ## Preferences

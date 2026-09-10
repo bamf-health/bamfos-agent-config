@@ -52,7 +52,7 @@ export default defineNuxtConfig({
 });
 ```
 
-You should also use the `tailwindReferencePlugin` to automatically add the Tailwind CSS import to your Vue components. See [Nuxt and TailwindCSS](../nuxt/rules/nuxt-and-tailwindcss.md) for more information.
+You should also use the `tailwindReferencePlugin` to automatically add the Tailwind CSS import to your Vue components. See [vue-nuxt Tailwind](../../vue-nuxt/references/tailwind.md) for more information.
 
 ### Step 3: Import Tailwind CSS
 
@@ -235,4 +235,4 @@ import tailwindcss from "@tailwindcss/vite";
 
 - Official Documentation: https://tailwindcss.com/docs/installation/using-vite
 - Tailwind CSS v4 Upgrade Guide: https://tailwindcss.com/docs/upgrade-guide
-- Nuxt and TailwindCSS: [nuxt/rules/nuxt-and-tailwindcss.md](../nuxt/rules/nuxt-and-tailwindcss.md)
+- Nuxt and TailwindCSS: [vue-nuxt/references/tailwind.md](../../vue-nuxt/references/tailwind.md)

@@ -6,6 +6,8 @@ metadata:
   author: Karl Swedberg
 ---
 
+For most projects, use [vue-nuxt](../vue-nuxt/SKILL.md) instead. This directory is kept as reference.
+
 ## Persona
 
 - You are a world-class Senior Frontend Developer and an Expert in the latest versions of Vue, Nuxt, JavaScript, TypeScript, HTML, CSS, TailwindCSS, and other web technologies.
