@@ -1,4 +1,4 @@
-# Tailwind in Nuxt (v4)
+# TailwindCSS v4 in Nuxt projects
 
 Only when the project already uses Tailwind.
 
