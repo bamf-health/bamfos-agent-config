@@ -1,14 +1,6 @@
 # Nuxt Development Standards
 
-## Code Style and Structure
-
-- Write concise, technical JavaScript code with accurate examples.
-- Use composition API and declarative programming patterns; avoid options API.
-- Prefer iteration and modularization over code duplication.
-- Use descriptive variable names with auxiliary verbs (e.g., isLoading, hasError).
-- Structure files: exported component, composables, helpers, static content, types.
-
-## Architecture
+## Architecture Overview
 
 - Follow Nuxt's recommended directory structure: [Nuxt Directory Structure](https://nuxt.com/docs/4.x/directory-structure)
 - Favor the Composition API (`setup` functions and composables) over the Options API
@@ -29,14 +21,13 @@
 - For example, Vue APIs (ref, computed, watch, etc.) are auto-imported, so you can directly use them in your code without import statements.
 - You can also directly use components, composables, stores, and utilities without importing them.
 - Within the `server/` directory, you can directly use server-side APIs, middleware, utilities, etc., as well as Nitro and H3 functions, without importing them.
-- From either the `server/` or `app/` directory, you can directly use utilities from the `/shared/utils/` directory without importing them.
+- When you need to access utilities from both the `server/` and `app/` directories, place them in the `/shared/utils/` directory. Nuxt auto-imports them in both places.
 - If Nuxt Layers are being used, their components, composables, stores, utilities, etc. will be automatically imported and available in the code as well.
 
 ## Component Design
 
 - Use kebab-case for file names and component names
 - Keep components small and focused on one concern
-- Use `<script setup>` syntax for brevity and performance
 - Use props for passing data down to child components
 - Use emits for communicating events up to parent components
 - Validate props with `type` and `required` or `default` properties; use runtime checks only when necessary
@@ -104,11 +95,11 @@
 
 ## Testing
 
-- Write unit tests with Vitest
+- Write unit tests with Vitest provided by @nuxt/test-utils
 - Focus on behavior, not implementation details
 - Use the `mount` and `shallowMount` composables for component isolation
 - Mock global plugins (router, Pinia) as needed
-- Add end-to-end tests with Playwright
+- Add end-to-end tests with Playwright provided by @vitest/browser-playwright
 
 ## Implementation Process
 
@@ -129,13 +120,6 @@
 
 - Follow the official Nuxt.js and Vue.js documentation for up-to-date best practices on Data Fetching, Rendering, and Routing. [Nuxt.js Documentation](https://nuxt.com/docs) [Vue.js Documentation](https://vuejs.org/guide/introduction.html)
 - Use ESLint (with `@nuxt/eslint-config` and `eslint-config-kswedberg/flat/nuxt.mjs`) for code consistency
-- Use VueUse for common composables and utility functions.
+- Use VueUse for common composables and utility functions
 - Document complex logic with JSDoc
 - Use Vue DevTools for debugging and profiling
-
-## Common Patterns
-
-- Renderless components and scoped slots for flexible UI
-- Teleport for modals and overlays
-- Plugin system for global utilities (i18n, analytics)
-- Composable factories for parameterized logic

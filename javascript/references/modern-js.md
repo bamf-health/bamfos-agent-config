@@ -216,14 +216,14 @@ Restrictions: namespace form only (no `import defer { foo }` or default imports)
 
 ## Quick Reference
 
-| Old Pattern                                             | Modern API                                           |
-| ------------------------------------------------------- | ---------------------------------------------------- |
-| `Array.from(iter).map(...)` on huge/infinite data       | `Iterator.from(iter).map(...).toArray()`             |
-| Manual Set intersection/union/diff loops                | `a.intersection(b)`, `a.union(b)`, `a.difference(b)` |
-| `instanceof Error`                                      | `Error.isError(x)`                                   |
-| `arr.reduce((a, b) => a + b)` on floats                 | `Math.sumPrecise(arr)`                               |
-| Custom base64/hex helpers                               | `bytes.toBase64()`, `Uint8Array.fromBase64(s)`       |
-| Manual regex escape function                            | `RegExp.escape(input)`                               |
-| `fetch('./x.json').then(r => r.json())` at build time   | `import x from './x.json' with { type: 'json' }`     |
-| `try { fn() } catch ... Promise.resolve(res).then(...)` | `Promise.try(() => fn()).then(...)`                  |
-| `for await (const x of iter) arr.push(x)`               | `await Array.fromAsync(iter)`                        |
+| Old Pattern                                             | Modern API                                                                          |
+| ------------------------------------------------------- | ----------------------------------------------------------------------------------- |
+| `Array.from(iter).map(...)` on huge data                | `Iterator.from(iter).map(...).toArray()` or `someArray.values().map(...).toArray()` |
+| Manual Set intersection/union/diff loops                | `a.intersection(b)`, `a.union(b)`, `a.difference(b)`                                |
+| `instanceof Error`                                      | `Error.isError(x)`                                                                  |
+| `arr.reduce((a, b) => a + b)` on floats                 | `Math.sumPrecise(arr)`                                                              |
+| Custom base64/hex helpers                               | `bytes.toBase64()`, `Uint8Array.fromBase64(s)`                                      |
+| Manual regex escape function                            | `RegExp.escape(input)`                                                              |
+| `fetch('./x.json').then(r => r.json())` at build time   | `import x from './x.json' with { type: 'json' }`                                    |
+| `try { fn() } catch ... Promise.resolve(res).then(...)` | `Promise.try(() => fn()).then(...)`                                                 |
+| `for await (const x of iter) arr.push(x)`               | `await Array.fromAsync(iter)`                                                       |

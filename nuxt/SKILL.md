@@ -17,11 +17,11 @@ Instructions for building high-quality Nuxt applications with the Composition AP
 This is a Nuxt application with SSR enabled. Components should be isomorphic and can be executed on both server or client side.
 
 In scenarios where you need different logic for server and client, use \`import.meta.client\` and \`import.meta.server\`
-to branch the code, and use dynamic imports if needed.
+to branch the code, and use dynamic imports if needed. Templates within SFCs can use the `<client-only>` component to limit rendering to the client side.
 
 ## Project Context
 
-- Vue 3.x+ with Composition API as default
+- Vue 3.x+ with composition API and declarative programming patterns; avoid options API
 - Latest version of Nuxt for server-side rendering
 - JavaScript and JSDoc comments for type safety
 - Single File Components (`.vue`) with `<script setup>` syntax

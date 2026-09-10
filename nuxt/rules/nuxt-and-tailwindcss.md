@@ -15,7 +15,7 @@ This file provides a general overview of TailwindCSS best practices and guidelin
 
 ## Ensure Tailwind is imported into Vue components
 
-If the project is using Tailwind, ensure Tailwind is imported into Vue components.
+If the project is using Tailwind, ensure Tailwind is imported into Vue components. This can be done by using the Tailwind Reference Plugin provided below.
 
 ### Tailwind Reference Plugin
 

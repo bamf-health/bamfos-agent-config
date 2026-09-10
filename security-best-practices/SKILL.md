@@ -1,6 +1,6 @@
 ---
 name: "security-best-practices"
-description: "Perform language and framework specific security best-practice reviews and suggest improvements. Trigger only when the user explicitly requests security best practices guidance, a security review/report, or secure-by-default coding help. Trigger only for supported languages (python, javascript, golang). Do not trigger for general code review, debugging, or non-security tasks."
+description: "Perform language and framework specific security best-practice reviews and suggest improvements. Trigger only when the user explicitly requests security best practices guidance, a security review/report/audit, or secure-by-default coding help. Trigger only for supported languages (python, javascript, golang). Do not trigger for general code review, debugging, or non-security tasks."
 metadata:
   source: https://github.com/github/awesome-copilot
 ---
