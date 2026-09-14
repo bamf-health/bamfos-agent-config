@@ -18,18 +18,26 @@ npx skills@latest update --project
 
 ## Included Skills
 
-- [accessibility](accessibility/SKILL.md)
-- [code-simplification](code-simplification/SKILL.md)
-- [css](css/SKILL.md)
-- [formkit](formkit/SKILL.md)
-- [general-code-quality](general-code-quality/SKILL.md)
-- [javascript](javascript/SKILL.md)
-- [mongoose](mongoose/SKILL.md)
-- [nginx](nginx/SKILL.md)
-- [node](node/SKILL.md)
-- [nuxt](nuxt/SKILL.md) (reference; prefer vue-nuxt)
-- [ponytail](ponytail/SKILL.md)
-- [security-best-practices](security-best-practices/SKILL.md)
-- [vue](vue/SKILL.md) (reference; prefer vue-nuxt)
-- [vue-nuxt](vue-nuxt/SKILL.md)
-- [zsh](zsh/SKILL.md)
+Skills are grouped by the kind of agent that uses them.
+
+### Frontend
+
+- [accessibility](frontend-agent/accessibility/SKILL.md)
+- [css](frontend-agent/css/SKILL.md)
+- [formkit](frontend-agent/formkit/SKILL.md)
+- [javascript](frontend-agent/javascript/SKILL.md)
+- [vue-nuxt](frontend-agent/vue-nuxt/SKILL.md)
+
+### Backend
+
+- [mongoose](backend-agent/mongoose/SKILL.md)
+- [nginx](backend-agent/nginx/SKILL.md)
+- [node](backend-agent/node/SKILL.md)
+
+### General
+
+- [code-simplification](general/code-simplification/SKILL.md)
+- [general-code-quality](general/general-code-quality/SKILL.md)
+- [ponytail](general/ponytail/SKILL.md)
+- [ponytail-audit](general/ponytail-audit/SKILL.md)
+- [security-best-practices](general/security-best-practices/SKILL.md)
