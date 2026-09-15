@@ -14,8 +14,9 @@ description: >
   use for non-coding requests (general knowledge, prose, translation,
   summaries, recipes).
 argument-hint: "[lite|full]"
-source: https://github.com/DietrichGebert/ponytail/
 license: MIT
+metadata:
+  source: https://github.com/DietrichGebert/ponytail/
 ---
 
 # Ponytail

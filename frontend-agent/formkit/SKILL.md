@@ -1,7 +1,8 @@
 ---
 name: formkit
 description: Use when working with FormKit forms, validation, schema, or custom inputs in Vue, or Nuxt projects.
-source: "npx formkit skill"
+metadata:
+  source: "npx formkit skill"
 ---
 
 # FormKit
