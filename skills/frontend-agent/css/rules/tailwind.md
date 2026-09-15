@@ -21,6 +21,14 @@ Instructions for installing and configuring Tailwind CSS version 4 and above usi
 
 Install `tailwindcss` and the `@tailwindcss/vite` plugin:
 
+If the project uses pnpm, use the following command:
+
+```bash
+pnpm install tailwindcss @tailwindcss/vite
+```
+
+If the project uses npm, use the following command:
+
 ```bash
 npm install tailwindcss @tailwindcss/vite
 ```
@@ -31,7 +39,7 @@ Add the `@tailwindcss/vite` plugin to your Vite configuration file:
 
 ```typescript
 // vite.config.ts
-import { defineConfig } from 'vite';
+import {defineConfig} from 'vite';
 import tailwindcss from '@tailwindcss/vite';
 
 export default defineConfig({
@@ -42,7 +50,7 @@ export default defineConfig({
 For Nuxt projects with Vite:
 
 ```typescript
-// vite.config.ts
+// nuxt.config.ts
 import tailwindcss from '@tailwindcss/vite';
 
 export default defineNuxtConfig({
@@ -52,7 +60,7 @@ export default defineNuxtConfig({
 });
 ```
 
-You should also use the `tailwindReferencePlugin` to automatically add the Tailwind CSS import to your Vue components. See [vue-nuxt Tailwind](../../vue-nuxt/references/tailwind.md) for more information.
+Nuxt projects should also use the `tailwindReferencePlugin` to automatically add the Tailwind CSS import to your Vue components. See [vue-nuxt Tailwind](../../vue-nuxt/references/tailwind.md) for more information.
 
 ### Step 3: Import Tailwind CSS
 

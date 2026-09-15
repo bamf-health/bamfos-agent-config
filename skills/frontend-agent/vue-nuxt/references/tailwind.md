@@ -7,7 +7,7 @@ Only when the project already uses Tailwind.
 - Entry CSS (`app/assets/css/main.css` or the path the repo already uses): `@import "tailwindcss";` — not the old `@tailwind base/components/utilities` directives.
 - No `tailwind.config.js` / PostCSS Tailwind plugin unless the repo is still on TailwindCSS v3.
 
-`@apply` / `@variant` in SFC `<style>` need `@reference` to the main CSS file. Copy [scripts/tailwind-reference-plugin.js](../scripts/tailwind-reference-plugin.js) to `vite/tailwind-reference-plugin.js` if the project does not already have it.
+The `@apply` and `@variant` directives in SFC `<style>` need `@reference` to the main CSS file. Copy [scripts/tailwind-reference-plugin.js](../scripts/tailwind-reference-plugin.js) to `vite/tailwind-reference-plugin.js` if the project does not already have it. Then make sure the `nuxt.config.ts` file has the `tailwindReferencePlugin` plugin configured:
 
 ```js
 import path from 'node:path';
