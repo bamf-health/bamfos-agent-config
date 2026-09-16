@@ -46,9 +46,11 @@ Top-level `await` in `<script setup>` makes the component async. **Nuxt already 
 
 ```js
 const user = ref({name: 'A', profile: {age: 30}});
+
 user.value.profile.age = 31; // tracked
 
 const data = shallowRef({items: []});
+
 data.value.items.push('x'); // not tracked
 data.value = {items: ['x']}; // tracked
 ```
@@ -58,21 +60,30 @@ data.value = {items: ['x']}; // tracked
 - `reactive()` drops reactivity if destructured — use `ref` / `toRefs` / `toValue`.
 
 ```js
-watch(count, (n, o) => {});
+watch(count, (n, o) => {/* code */});
 watch(() => props.id, (id) => fetchData(id), {immediate: true});
-watch([a, b], ([x, y]) => {});
+watch([a, b], ([x, y]) => {/* code */});
 watch(state, cb, {deep: 2}); // Vue 3.5+ depth
 watch(source, cb, {once: true});
 watch(source, cb, {flush: 'post'}); // DOM already updated
+watchEffect(async() => {
+  const controller = new AbortController();
+
+  onWatcherCleanup(() => controller.abort());
+  data.value = await fetch(`/api/${id.value}`, {signal: controller.signal}).then((r) => r.json());
+});
 ```
 
 ```js
 watchEffect(async() => {
   const controller = new AbortController();
+
   onWatcherCleanup(() => controller.abort());
-  data.value = await fetch(`/api/${id.value}`, {signal: controller.signal}).then((r) => r.json());
+  data.value = await fetch(`/api/${id.value}`, {signal: controller.signal})
+  .then((r) => r.json());
 });
-const {pause, resume, stop} = watchEffect(() => {});
+
+const {pause, resume, stop} = watchEffect(() => {/* code */});
 ```
 
 Lifecycle (cleanup side effects in `onUnmounted`): `onBeforeMount`, `onMounted`, `onBeforeUpdate`, `onUpdated`, `onBeforeUnmount`, `onUnmounted`, `onErrorCaptured`, `onActivated` / `onDeactivated` (KeepAlive), `onServerPrefetch` (SSR).
