@@ -19,4 +19,4 @@ The BAMFJS library is a set of common JavaScript utilities that are used across 
 
 ## References
 
-- [BAMFJS](references/bamfjs.md) - Contains spcific information about the utilities available in theBAMFJS library
+- [BAMFJS](references/bamfjs.md) - Contains specific information about the utilities available in the BAMFJS library
