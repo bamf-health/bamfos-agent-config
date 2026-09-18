@@ -1,8 +1,10 @@
 ---
 name: "security-best-practices"
-description: "Perform language and framework specific security best-practice reviews and suggest improvements. Trigger only when the user explicitly requests security best practices guidance, a security review/report/audit, or secure-by-default coding help. Trigger only for supported languages (python, javascript, golang). Do not trigger for general code review, debugging, or non-security tasks."
+description: Perform language and framework specific security best-practice reviews and suggest improvements. Trigger only when the user explicitly requests security best practices guidance, a security review/report/audit, or secure-by-default coding help. Trigger only for supported languages (JavaScript, Ruby). Do not trigger for general code review, debugging, or non-security tasks.
 metadata:
-  source: https://github.com/github/awesome-copilot
+  sources:
+    - https://github.com/github/awesome-copilot
+    - https://github.com/ChitoLabs/ai-skill-pack/
 ---
 
 # Security Best Practices
@@ -77,7 +79,7 @@ Always follow any normal testing flows the user has configured (if any) to confi
 
 # General Security Advice
 
-Below is a few bits of secure coding advice that applies to almost any language or framework.
+Below are a few bits of secure coding advice that applies to almost any language or framework.
 
 ### Avoid Using Incrementing IDs for Public IDs of Resources
 
