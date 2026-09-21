@@ -173,12 +173,13 @@ Instructions...
 ```
 
 The key property is **progressive disclosure**: only `name` and `description` sit in context
-until the skill triggers. The body loads on demand, and bundled `references/`, `scripts/`,
-`examples/` and `rules/` subdirectories load only when the body points at them. That is why our
-skills carry large reference files without bloating every session — see
+until the skill triggers. The body loads on demand, and bundled `references/`, `scripts/` and
+`examples/` subdirectories load only when the body points at them. That is why our skills carry
+large reference files without bloating every session — see
 [`skills/frontend-vue-nuxt/`](skills/frontend-vue-nuxt/).
 
-Ours live under [`skills/`](skills/), grouped by the agent that uses them, and install with
+Ours live under [`skills/`](skills/), one flat level with the agent group folded into the
+skill name, and install with
 `npx skills@latest add https://github.com/bamf-health/bamfos-agent-config`.
 
 Skills are also the **recommended successor to custom commands**. `.claude/commands/deploy.md`
@@ -216,9 +217,11 @@ Claude to spawn subagents, and a subagent can invoke skills of its own.
    `CLAUDE.md`. A rule can carry YAML `paths:` frontmatter so it loads only when Claude touches a
    matching file, keeping context lean until it's relevant. We do not use this directory yet; it
    is the natural home for our synced rulebooks if we want path-scoped loading.
-3. **A `rules/` subdirectory inside a skill** — e.g.
-   [`skills/backend-node/rules/async-patterns.md`](skills/backend-node/rules/async-patterns.md).
-   These are just reference files the skill body points at. No special meaning to Claude Code.
+3. **A skill's own supporting files** — e.g.
+   [`skills/backend-node/references/async-patterns.md`](skills/backend-node/references/async-patterns.md).
+   These are just files the skill body points at, with no special meaning to Claude Code. We name
+   that folder `references/` in every skill, never `rules/`, precisely so sense 3 cannot be
+   mistaken for sense 1 or 2.
 
 ### CLAUDE.md
 

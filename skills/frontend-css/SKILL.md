@@ -25,4 +25,4 @@ metadata:
 
 ## Reference Files
 
-- If the project is using TailwindCSS or if the user asks for TailwindCSS, use [TailwindCSS Installation with Vite](rules/tailwind.md).
+- If the project is using TailwindCSS or if the user asks for TailwindCSS, use [TailwindCSS Installation with Vite](references/tailwind.md).

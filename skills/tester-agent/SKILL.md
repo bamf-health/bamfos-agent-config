@@ -25,8 +25,8 @@ Every non-trivial change leaves a test behind that fails if the logic breaks.
 ## Rules
 
 - Backend:
-  - For Ruby on Rails, use the built-in test runner, `rails test` and `assert`. Follow `backend-rails/rules/testing.md`.
-  - For Node.js, use the built-in test runner, `node:test` and `t.assert`. Follow `backend-node/rules/testing.md`.
+  - For Ruby on Rails, use the built-in test runner, `rails test` and `assert`. Follow `backend-rails/references/testing.md`.
+  - For Node.js, use the built-in test runner, `node:test` and `t.assert`. Follow `backend-node/references/testing.md`.
 - Frontend: use the project's existing runner and component testing setup. Do not add a new framework.
 - Mock at the boundary only: network, database, clock, filesystem. Never mock the unit under test.
 - One behavior per test. Name it after the behavior, not the function.
