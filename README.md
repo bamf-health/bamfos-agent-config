@@ -18,42 +18,47 @@ npx skills@latest update --project
 
 ## Layout
 
-All published skills live under `skills/`, grouped by the kind of agent that uses them:
+All published skills live in a single flat level under `skills/`, one directory per skill.
+Claude Code only discovers skills at exactly `<skills-root>/<skill-name>/SKILL.md`, so the
+agent grouping lives in the skill name rather than in a parent directory:
 
 ```
 skills/
-  <agent>/SKILL.md           # the agent's own role and process
-  <agent>/<skill>/SKILL.md   # a topic skill that agent uses
+  <agent>-<topic>/SKILL.md   # a topic skill, e.g. frontend-vue-nuxt
+  <agent>-agent/SKILL.md     # an agent's own role and process, e.g. review-agent
 ```
+
+A skill's directory name and its front matter `name:` must match.
 
 ## Included Skills
 
 ### Frontend
 
-- [accessibility](skills/frontend-agent/accessibility/SKILL.md)
-- [css](skills/frontend-agent/css/SKILL.md)
-- [formkit](skills/frontend-agent/formkit/SKILL.md)
-- [javascript](skills/frontend-agent/javascript/SKILL.md)
-- [vue-nuxt](skills/frontend-agent/vue-nuxt/SKILL.md)
+- [frontend-accessibility](skills/frontend-accessibility/SKILL.md)
+- [frontend-bamfos](skills/frontend-bamfos/SKILL.md)
+- [frontend-css](skills/frontend-css/SKILL.md)
+- [frontend-formkit](skills/frontend-formkit/SKILL.md)
+- [frontend-javascript](skills/frontend-javascript/SKILL.md)
+- [frontend-vue-nuxt](skills/frontend-vue-nuxt/SKILL.md)
 
 ### Backend
 
-- [mongoose](skills/backend-agent/mongoose/SKILL.md)
-- [nginx](skills/backend-agent/nginx/SKILL.md)
-- [node](skills/backend-agent/node/SKILL.md)
+- [backend-mongoose](skills/backend-mongoose/SKILL.md)
+- [backend-nginx](skills/backend-nginx/SKILL.md)
+- [backend-node](skills/backend-node/SKILL.md)
 
 ### General
 
-- [code-simplification](skills/general-agent/code-simplification/SKILL.md)
-- [general-code-quality](skills/general-agent/general-code-quality/SKILL.md)
-- [ponytail](skills/general-agent/ponytail/SKILL.md)
-- [ponytail-audit](skills/general-agent/ponytail-audit/SKILL.md)
-- [security-best-practices](skills/general-agent/security-best-practices/SKILL.md)
+- [general-code-simplification](skills/general-code-simplification/SKILL.md)
+- [general-code-quality](skills/general-code-quality/SKILL.md)
+- [general-ponytail](skills/general-ponytail/SKILL.md)
+- [general-ponytail-audit](skills/general-ponytail-audit/SKILL.md)
+- [general-security-best-practices](skills/general-security-best-practices/SKILL.md)
 
 ### Planner
 
 - [planner-agent](skills/planner-agent/SKILL.md)
-- [jira](skills/planner-agent/jira/SKILL.md)
+- [planner-jira](skills/planner-jira/SKILL.md)
 
 ### Tester
 

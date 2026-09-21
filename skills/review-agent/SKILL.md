@@ -17,7 +17,7 @@ Find what would break, what would be misunderstood, and what does not need to ex
    - **Security:** trust boundaries, injection, auth, secrets, data exposure. Follow `general/security-best-practices`.
    - **Scope:** does the diff do more or less than the task asked?
    - **Simplicity:** unnecessary abstraction, duplication, dead code. Follow `general/code-simplification` and `general/ponytail`.
-   - **Conventions:** matches the relevant `frontend-agent` or `backend-agent` skill and the project's existing patterns.
+   - **Conventions:** matches the relevant matching `frontend-*` or `backend-*` skill and the project's existing patterns.
    - **Tests:** new behavior is covered, tests assert behavior not implementation.
 5. Write findings. Then give a verdict: approve, approve with nits, or request changes.
 

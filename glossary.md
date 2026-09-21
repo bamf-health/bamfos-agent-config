@@ -176,7 +176,7 @@ The key property is **progressive disclosure**: only `name` and `description` si
 until the skill triggers. The body loads on demand, and bundled `references/`, `scripts/`,
 `examples/` and `rules/` subdirectories load only when the body points at them. That is why our
 skills carry large reference files without bloating every session — see
-[`skills/frontend-agent/vue-nuxt/`](skills/frontend-agent/vue-nuxt/).
+[`skills/frontend-vue-nuxt/`](skills/frontend-vue-nuxt/).
 
 Ours live under [`skills/`](skills/), grouped by the agent that uses them, and install with
 `npx skills@latest add https://github.com/bamf-health/bamfos-agent-config`.
@@ -217,7 +217,7 @@ Claude to spawn subagents, and a subagent can invoke skills of its own.
    matching file, keeping context lean until it's relevant. We do not use this directory yet; it
    is the natural home for our synced rulebooks if we want path-scoped loading.
 3. **A `rules/` subdirectory inside a skill** — e.g.
-   [`skills/backend-agent/node/rules/async-patterns.md`](skills/backend-agent/node/rules/async-patterns.md).
+   [`skills/backend-node/rules/async-patterns.md`](skills/backend-node/rules/async-patterns.md).
    These are just reference files the skill body points at. No special meaning to Claude Code.
 
 ### CLAUDE.md
@@ -319,7 +319,7 @@ gives Claude new tools — Jira, GitHub, Slack, a database, a browser. Added wit
 in `.mcp.json` (committable, so a whole repo shares a server), through a plugin, or as a claude.ai
 **connector**.
 
-Relevant to us: our Planner agent's [Jira skill](skills/planner-agent/jira/SKILL.md) is the kind
+Relevant to us: our Planner agent's [Jira skill](skills/planner-jira/SKILL.md) is the kind
 of work an MCP server can do natively instead of through shell commands.
 
 Watch the context cost — every connected server's tools occupy context.
