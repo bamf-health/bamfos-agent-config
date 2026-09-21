@@ -13,9 +13,15 @@ if (import.meta.client) {/* browser-only */}
 </client-only>
 ```
 
+## SSR best practices
+
+See [./nuxt-ssr.md](./nuxt-ssr.md) for SSR best practices and avoiding common SSR pitfalls.
+
 ## Auto-imports
 
-No import for Vue APIs, `app/components/`, `app/composables/`, Pinia stores, `shared/utils/`, or layer equivalents. `server/` auto-imports Nitro/H3 and server utils. Import third-party modules and anything Nuxt is not scanning.
+No need to import Vue APIs, `app/components/`, `app/composables/`, `app/utils/`, Pinia stores, or layer equivalents. The `server/` directory auto-imports Nitro/H3 and `server/utils`. Both `app/` and `server` auto-import `shared/utils`. Files in nested directories within composables and utils are NOT auto-imported.
+
+Explicitly import third-party modules and anything Nuxt is not scanning.
 
 ## Data fetching
 
@@ -25,8 +31,6 @@ const {data, pending, error, refresh} = await useFetch('/api/items', {
 });
 ```
 
-- `useFetch` when the URL is the cache key; `useAsyncData` when the key and fetcher are separate.
-- Prefer the project `$fetch` wrapper when one exists.
-- Surface pending and error in the UI. Ignore or abort stale requests when params change.
+Information information about data fetching is at [./nuxt-data-fetching.md](./nuxt-data-fetching.md).
 
 `lazy-` prefix for below-fold components. Do not also wrap those in `defineAsyncComponent`. Use `v-once` / `v-memo` only when profiling shows extra work.

@@ -72,4 +72,6 @@ If the project uses Tailwind, utilities in the template are the default. `<style
 
 - [references/vue.md](references/vue.md) — macros, reactivity, watchers, composables, built-ins
 - [references/nuxt.md](references/nuxt.md) — SSR gating, auto-imports, `useFetch` / `useAsyncData`
+- [references/nuxt-data-fetching.md](references/nuxt-data-fetching.md) — Nuxt data fetching
+- [references/nuxt-ssr.md](references/nuxt-ssr.md) — SSR best practices and avoiding common SSR pitfalls
 - [references/tailwind.md](references/tailwind.md) — Tailwind v4 in Nuxt
