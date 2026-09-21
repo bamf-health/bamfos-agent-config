@@ -66,3 +66,29 @@ skills/
 ### Review
 
 - [review-agent](skills/review-agent/SKILL.md)
+
+## Other Possibly Useful Skills
+
+Nitro:
+
+```bash
+npx skills add https://github.com/antfu/skills --skill nitro
+```
+
+Pinia:
+
+```bash
+npx skills add https://github.com/antfu/skills --skill pinia
+```
+
+Vitest:
+
+```bash
+npx skills add https://github.com/antfu/skills --skill vitest
+```
+
+Vue Testing Best Practices:
+
+```bash
+npx skills add https://github.com/antfu/skills --skill vue-testing-best-practices
+```
