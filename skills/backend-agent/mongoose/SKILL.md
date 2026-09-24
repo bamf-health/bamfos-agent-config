@@ -1,5 +1,5 @@
 ---
-name: api-database-mongoose
+name: mongoose
 description: MongoDB ODM with schemas, validation, and middleware
 metadata:
   source_repo: https://github.com/agents-inc/skills/blob/main/src/skills/api-database-mongoose/SKILL.md

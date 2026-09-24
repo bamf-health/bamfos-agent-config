@@ -37,6 +37,7 @@ feature for instruction files that load alongside `CLAUDE.md`, and the BAMF guil
 ### Frontend
 
 - [accessibility](skills/frontend-agent/accessibility/SKILL.md)
+- [bamfos](skills/frontend-agent/bamfos/SKILL.md)
 - [css](skills/frontend-agent/css/SKILL.md)
 - [formkit](skills/frontend-agent/formkit/SKILL.md)
 - [javascript](skills/frontend-agent/javascript/SKILL.md)
