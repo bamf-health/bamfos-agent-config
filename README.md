@@ -26,11 +26,18 @@ skills/
   <agent>/<skill>/SKILL.md   # a topic skill that agent uses
 ```
 
+Supporting files a skill body links to go in `references/` (plus `examples/`, `scripts/` and
+`assets/` where they fit). Never name that folder `rules/` — `.claude/rules/` is a Claude Code
+feature for instruction files that load alongside `CLAUDE.md`, and the BAMF guild rulebooks
+(`rules/backend.md`, `rules/frontend.md`, `rules/shared.md`) use the same word again. Keeping
+`rules/` out of skills leaves the term unambiguous.
+
 ## Included Skills
 
 ### Frontend
 
 - [accessibility](skills/frontend-agent/accessibility/SKILL.md)
+- [bamfos](skills/frontend-agent/bamfos/SKILL.md)
 - [css](skills/frontend-agent/css/SKILL.md)
 - [formkit](skills/frontend-agent/formkit/SKILL.md)
 - [javascript](skills/frontend-agent/javascript/SKILL.md)

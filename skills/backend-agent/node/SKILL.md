@@ -14,15 +14,15 @@ Use this skill whenever you are dealing with Node.js code to obtain domain-speci
 
 For multi-step processes, follow these high-level sequences before consulting the relevant rule file:
 
-**Graceful shutdown**: Register signal handlers (SIGTERM/SIGINT) → stop accepting new work → drain in-flight requests → close external connections (DB, cache) → exit with appropriate code. See [rules/graceful-shutdown.md](rules/graceful-shutdown.md).
+**Graceful shutdown**: Register signal handlers (SIGTERM/SIGINT) → stop accepting new work → drain in-flight requests → close external connections (DB, cache) → exit with appropriate code. See [references/graceful-shutdown.md](references/graceful-shutdown.md).
 
-**Error handling**: Define a shared error base class → classify errors (operational vs programmer) → add async boundary handlers (`process.on('unhandledRejection')`) → propagate typed errors through the call stack → log with context before responding or crashing. See [rules/error-handling.md](rules/error-handling.md).
+**Error handling**: Define a shared error base class → classify errors (operational vs programmer) → add async boundary handlers (`process.on('unhandledRejection')`) → propagate typed errors through the call stack → log with context before responding or crashing. See [references/error-handling.md](references/error-handling.md).
 
-**Diagnosing flaky tests**: Isolate the test with `--test-only` → check for shared state or timer dependencies → inspect async teardown order → add retry logic as a temporary diagnostic step → fix root cause. See [rules/flaky-tests.md](rules/flaky-tests.md).
+**Diagnosing flaky tests**: Isolate the test with `--test-only` → check for shared state or timer dependencies → inspect async teardown order → add retry logic as a temporary diagnostic step → fix root cause. See [references/flaky-tests.md](references/flaky-tests.md).
 
-**Diagnosing stuck processes/tests** (`node --test` hangs, "process did not exit", CI timeout, open handles): isolate file/test → run with explicit timeout/reporter → inspect handles via `why-is-node-running` (`SIGUSR1`) → patch deterministic teardown in resource-creation scope → rerun isolated + full suite until stable. See [rules/stuck-processes-and-tests.md](rules/stuck-processes-and-tests.md).
+**Diagnosing stuck processes/tests** (`node --test` hangs, "process did not exit", CI timeout, open handles): isolate file/test → run with explicit timeout/reporter → inspect handles via `why-is-node-running` (`SIGUSR1`) → patch deterministic teardown in resource-creation scope → rerun isolated + full suite until stable. See [references/stuck-processes-and-tests.md](references/stuck-processes-and-tests.md).
 
-**Profiling a slow path**: Reproduce under realistic load → capture a CPU profile with `--cpu-prof` → identify hot functions → check for stream backpressure or unnecessary serialisation → validate improvement with a benchmark. See [rules/profiling.md](rules/profiling.md) and [rules/performance.md](rules/performance.md).
+**Profiling a slow path**: Reproduce under realistic load → capture a CPU profile with `--cpu-prof` → identify hot functions → check for stream backpressure or unnecessary serialisation → validate improvement with a benchmark. See [references/profiling.md](references/profiling.md) and [references/performance.md](references/performance.md).
 
 ## High-priority activation checklist (streams + caching)
 
@@ -46,24 +46,24 @@ For CSV/ETL-style prompts, prefer an answer structure like:
 
 Link relevant rules directly in explanations so models can retrieve details:
 
-- [rules/streams.md](rules/streams.md)
-- [rules/caching.md](rules/caching.md)
+- [references/streams.md](references/streams.md)
+- [references/caching.md](references/caching.md)
 
 ## How to use
 
 Read individual rule files for detailed explanations and code examples:
 
-- [rules/error-handling.md](rules/error-handling.md) - Error handling patterns in Node.js
-- [rules/async-patterns.md](rules/async-patterns.md) - Async/await and Promise patterns
-- [rules/streams.md](rules/streams.md) - Working with Node.js streams
-- [rules/modules.md](rules/modules.md) - ES Modules and CommonJS patterns
-- [rules/testing.md](rules/testing.md) - Testing strategies for Node.js applications
-- [rules/flaky-tests.md](rules/flaky-tests.md) - Identifying and diagnosing flaky tests with node:test
-- [rules/stuck-processes-and-tests.md](rules/stuck-processes-and-tests.md) - Diagnosing processes that do not exit and tests that get stuck
-- [rules/node-modules-exploration.md](rules/node-modules-exploration.md) - Navigating and analyzing node_modules directories
-- [rules/performance.md](rules/performance.md) - Performance optimization techniques
-- [rules/caching.md](rules/caching.md) - Caching patterns and libraries
-- [rules/profiling.md](rules/profiling.md) - Profiling and benchmarking tools
-- [rules/logging.md](rules/logging.md) - Logging and debugging patterns
-- [rules/environment.md](rules/environment.md) - Environment configuration and secrets management
-- [rules/graceful-shutdown.md](rules/graceful-shutdown.md) - Graceful shutdown and signal handling
+- [references/error-handling.md](references/error-handling.md) - Error handling patterns in Node.js
+- [references/async-patterns.md](references/async-patterns.md) - Async/await and Promise patterns
+- [references/streams.md](references/streams.md) - Working with Node.js streams
+- [references/modules.md](references/modules.md) - ES Modules and CommonJS patterns
+- [references/testing.md](references/testing.md) - Testing strategies for Node.js applications
+- [references/flaky-tests.md](references/flaky-tests.md) - Identifying and diagnosing flaky tests with node:test
+- [references/stuck-processes-and-tests.md](references/stuck-processes-and-tests.md) - Diagnosing processes that do not exit and tests that get stuck
+- [references/node-modules-exploration.md](references/node-modules-exploration.md) - Navigating and analyzing node_modules directories
+- [references/performance.md](references/performance.md) - Performance optimization techniques
+- [references/caching.md](references/caching.md) - Caching patterns and libraries
+- [references/profiling.md](references/profiling.md) - Profiling and benchmarking tools
+- [references/logging.md](references/logging.md) - Logging and debugging patterns
+- [references/environment.md](references/environment.md) - Environment configuration and secrets management
+- [references/graceful-shutdown.md](references/graceful-shutdown.md) - Graceful shutdown and signal handling

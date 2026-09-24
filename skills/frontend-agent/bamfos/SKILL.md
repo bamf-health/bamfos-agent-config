@@ -1,5 +1,5 @@
 ---
-name: bamfos frontend
+name: bamfos
 description: Use this skill when working on the frontend of a BAMFOS application.
 license: MIT
 metadata:

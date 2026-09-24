@@ -27,4 +27,4 @@ export default defineNuxtConfig({
 
 `currentDir` is the Nuxt project root (or layer root) that owns that CSS file.
 
-Install/setup checklist and TailwindCSS v4 don’ts: [css/rules/tailwind.md](../../css/rules/tailwind.md).
+Install/setup checklist and TailwindCSS v4 don’ts: [css/references/tailwind.md](../../css/references/tailwind.md).
