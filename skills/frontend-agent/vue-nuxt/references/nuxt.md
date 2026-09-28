@@ -31,6 +31,6 @@ const {data, pending, error, refresh} = await useFetch('/api/items', {
 });
 ```
 
-Information information about data fetching is at [./nuxt-data-fetching.md](./nuxt-data-fetching.md).
+Information about data fetching is at [./nuxt-data-fetching.md](./nuxt-data-fetching.md).
 
 `lazy-` prefix for below-fold components. Do not also wrap those in `defineAsyncComponent`. Use `v-once` / `v-memo` only when profiling shows extra work.
