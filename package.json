@@ -8,10 +8,10 @@
   },
   "keywords": [],
   "license": "MIT",
-  "packageManager": "pnpm@11.24.0",
+  "packageManager": "pnpm@12.6.0",
   "devDependencies": {
     "@eslint/markdown": "^8.0.3",
-    "eslint": "^10.9.1",
+    "eslint": "^10.11.0",
     "eslint-config-kswedberg": "^7.4.4"
   }
 }
