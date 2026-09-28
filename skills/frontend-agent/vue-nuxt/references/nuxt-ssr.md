@@ -183,17 +183,6 @@ onMounted(() => {
 </script>
 ```
 
-### Dynamic Imports for Browser Libraries
-
-```vue
-<script setup>
-onMounted(async () => {
-  const {Chart} = await import('chart.js');
-  new Chart(canvas.value, config);
-})
-</script>
-```
-
 ## Server-only Code
 
 ### Use `import.meta.server`
@@ -269,25 +258,7 @@ export default defineNuxtPlugin(() => {
 
 ### Provide/Inject Pattern
 
-```js
-// plugins/api.js
-export default defineNuxtPlugin(() => {
-  const api = createApiClient();
-
-  return {
-    provide: {
-      api,
-    },
-  };
-});
-```
-
-```vue
-<script setup>
-const {$api} = useNuxtApp();
-const data = await $api.get('/users');
-</script>
-```
+See "Centralize API Config with createUseFetch" in [nuxt-data-fetching.md](./nuxt-data-fetching.md). Wrap a provided `$fetch` instance in `useAsyncData` to avoid double fetching.
 
 ## Third-party Library Integration
 
@@ -310,19 +281,6 @@ onMounted(async () => {
   library.init();
 });
 </script>
-```
-
-### Use ClientOnly Component
-
-```vue
-<template>
-  <ClientOnly>
-    <BrowserOnlyComponent />
-    <template #fallback>
-      <div class="skeleton">Loading...</div>
-    </template>
-  </ClientOnly>
-</template>
 ```
 
 ## Debugging SSR Issues

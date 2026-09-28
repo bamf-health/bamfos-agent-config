@@ -21,9 +21,7 @@ defineExpose({reset});
 defineOptions({inheritAttrs: false, name: 'CustomName'});
 ```
 
-- Do not use `defineProps<{…}>()` / `defineEmits<{…}>()` in JS SFCs.
-- Do not destructure `defineProps` (including Vue 3.5 reactive destructure).
-- Skip `defineSlots` in JavaScript; declare slots in the template.
+Skip `defineSlots` in JavaScript; declare slots in the template.
 
 ```vue
 <template>
@@ -55,7 +53,6 @@ data.value.items.push('x'); // not tracked
 data.value = {items: ['x']}; // tracked
 ```
 
-- Prefer `shallowRef` for large or replace-as-a-whole data.
 - `computed(() => …)` read-only; `{get, set}` when writable.
 - `reactive()` drops reactivity if destructured — use `ref` / `toRefs` / `toValue`.
 
@@ -66,12 +63,6 @@ watch([a, b], ([x, y]) => {/* code */});
 watch(state, cb, {deep: 2}); // Vue 3.5+ depth
 watch(source, cb, {once: true});
 watch(source, cb, {flush: 'post'}); // DOM already updated
-watchEffect(async() => {
-  const controller = new AbortController();
-
-  onWatcherCleanup(() => controller.abort());
-  data.value = await fetch(`/api/${id.value}`, {signal: controller.signal}).then((r) => r.json());
-});
 ```
 
 ```js
@@ -120,8 +111,7 @@ In Nuxt, prefer `useFetch` / `useAsyncData` over a hand-rolled fetch composable.
 - `Transition` / `TransitionGroup` — `mode="out-in"` when swapping views; list children need unique `key`.
 - `Teleport` — `to="body"` or a selector; `defer` if the target mounts later (Vue 3.5+).
 - `KeepAlive` — `include` / `exclude` / `max`; pair with `onActivated` / `onDeactivated`.
-- `v-memo="[deps]"` to skip list-item re-renders; `v-once` for never-again.
-- Do not reach for experimental `<Suspense>` in Nuxt pages; Nuxt handles the page boundary.
+- `v-memo="[deps]"` to skip list-item re-renders; `v-once` for never-again. Use either only when profiling shows extra work.
 
 ```vue
 <Teleport to="body">

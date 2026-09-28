@@ -13,19 +13,15 @@ metadata:
 
 This skill provides a general overview of code quality best practices and guidelines.
 
-- Only modify sections of the code related to the task at hand.
-- Avoid modifying unrelated pieces of code.
-- Accomplish goals with minimal code changes.
-- Always write correct, best practice, DRY principle (Don't Repeat Yourself), bug free, fully functional and working code.
-- Focus on easy and readability code, over being performant.
-- Fully implement all requested functionality. Ensure code is complete!
-- Verify thoroughly finalised.
+- Only modify code related to the task at hand, with minimal changes.
+- Always write correct, DRY (Don't Repeat Yourself), bug-free code that fully implements all requested functionality. Verify it before finishing.
+- Favor readable code over performant code.
 - Use early returns whenever possible to make the code more readable.
 
 ## Commit Messages
 
-- Write meaningful, clear commit messages and maintain clean git history
-- Git commit message should avoid lengthy introductions such as "Refactored [the feature] by…" or "Enhanced [the feature] by…". Instead, focus on summarizing the changes made and, perhaps, the reason for the change in a single concise sentence.
+- Write meaningful, clear commit messages and maintain clean git history.
+- Avoid lengthy introductions such as "Refactored [the feature] by…" or "Enhanced [the feature] by…". Instead, focus on summarizing the changes made and, perhaps, the reason for the change in a single concise sentence.
 - Keep dependencies up to date and audit for vulnerabilities
 
 ## Smart Comments

@@ -136,35 +136,6 @@ const { data, status, error } = await useFetch('/api/posts')
 </template>
 ```
 
-## Use Lazy Fetching for Non-critical Data
-
-```vue
-<script setup lang="js">
-const id = useRoute().params.id
-
-// Critical data - blocks navigation
-const { data: post } = await useFetch(`/api/posts/${id}`)
-
-// Non-critical data - doesn't block navigation
-const { data: comments, status } = useFetch(`/api/posts/${id}/comments`, {
-  lazy: true,
-})
-
-// Or use useLazyFetch
-const { data: related } = useLazyFetch(`/api/posts/${id}/related`)
-</script>
-
-<template>
-  <article>
-    <h1>{{ post?.title }}</h1>
-    <p>{{ post?.content }}</p>
-  </article>
-
-  <section v-if="status === 'pending'">Loading comments...</section>
-  <CommentList v-else :comments="comments" />
-</template>
-```
-
 ## Minimize Payload Size
 
 ### Use `pick` for Simple Filtering

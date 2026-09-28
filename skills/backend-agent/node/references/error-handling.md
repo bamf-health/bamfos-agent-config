@@ -9,7 +9,11 @@ metadata:
 
 ## Minimal Error Code Implementation
 
-If you prefer no dependencies, use this minimal pattern:
+If you prefer no dependencies, use this minimal pattern. It demonstrates the core rules:
+
+- **Check errors by code, not by class**: `isAppError` lets `fetchUser` branch on `error.code` instead of matching custom subclasses.
+- **Async error handling**: always use try-catch with async/await and propagate errors properly. `fetchUser` and `loadUserForRequest` wrap persistence calls, re-throw known app errors, and map unknown failures to `databaseError`.
+- **Error cause chain**: pass the `cause` option (`new Error(message, {cause})`) to preserve error chains, as `createAppError`/`databaseError` do.
 
 ```javascript
 /**
@@ -99,14 +103,6 @@ throw notFound('User');
 throw validationError('Email is required');
 ```
 
-## Checking Error Codes
-
-Check errors by code, not by class. The example above defines `isAppError` and uses it inside `fetchUser` so you branch on `error.code` instead of matching custom subclasses.
-
-## Async Error Handling
-
-Always use try-catch with async/await and propagate errors properly. The `fetchUser` and `loadUserForRequest` functions in the example above show wrapping persistence calls, re-throwing known app errors, and mapping unknown failures to `databaseError`.
-
 ## Unhandled Rejections and Exceptions
 
 Do not handle `unhandledRejection` and `uncaughtException` manually.
@@ -132,14 +128,3 @@ try {
 }
 ```
 
-## Error Cause Chain
-
-Use the `cause` option to preserve error chains:
-
-```javascript
-try {
-  await externalService.call();
-} catch (error) {
-  throw new Error('Service call failed', {cause: error});
-}
-```

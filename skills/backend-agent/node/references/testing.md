@@ -148,37 +148,7 @@ describe('Database tests', () => {
 
 ## Isolation and Independence
 
-Tests must be independent and not share state:
-
-```javascript
-// BAD - shared mutable state
-let counter = 0;
-
-it('test 1', (t) => {
-  counter++;
-  t.assert.equal(counter, 1);
-});
-
-it('test 2', (t) => {
-  counter++;
-  t.assert.equal(counter, 2); // Depends on test 1
-});
-
-// GOOD - isolated state
-it('test 1', (t) => {
-  let counter = 0;
-
-  counter++;
-  t.assert.equal(counter, 1);
-});
-
-it('test 2', (t) => {
-  let counter = 0;
-
-  counter++;
-  t.assert.equal(counter, 1);
-});
-```
+Tests must be independent and not share mutable state. Reset state in `beforeEach` or keep it test-scoped. See [flaky-tests.md](flaky-tests.md#4-shared-state-between-tests) for examples.
 
 ## EventEmitter Timing in Tests
 

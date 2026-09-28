@@ -1,6 +1,6 @@
 ---
 name: modern-js
-description: Use when writing or reviewing JavaScript - prefer ES2025/ES2026 APIs (Iterator helpers, Set methods, Temporal, using, Promise.try, Error.isError, Math.sumPrecise, Map.getOrInsert) over older patterns.
+description: Use when writing or reviewing JavaScript - prefer ES2025/ES2026 APIs (Iterator helpers, Set methods, using, Promise.try, Array.fromAsync, RegExp.escape, Uint8Array base64/hex, JSON imports) over older patterns.
 metadata:
   source_repo: https://github.com/Cst2989/react-tips-skill
 ---
@@ -204,24 +204,12 @@ const translations = await import('./translations.json', {
 
 The `with { type: 'json' }` is required — it tells the loader to refuse the file if the MIME type doesn't match.
 
-Restrictions: namespace form only (no `import defer { foo }` or default imports), and modules that use top-level `await` can't be deferred.
-
-## Rules
-
-- NEVER write `instanceof Error` in library code. Use `Error.isError`.
-- NEVER write a manual `for await...of` loop just to collect into an array. Use `Array.fromAsync`.
-- NEVER use a manual escape function for user-controlled regex input. Use `RegExp.escape`.
-- NEVER materialize a huge iterator into an array before filtering. Use `Iterator.prototype` methods.
-- ALWAYS check if the target runtime supports the feature. If it doesn't, suggest a polyfill.
-
 ## Quick Reference
 
 | Old Pattern                                             | Modern API                                                                          |
 | ------------------------------------------------------- | ----------------------------------------------------------------------------------- |
 | `Array.from(iter).map(...)` on huge data                | `Iterator.from(iter).map(...).toArray()` or `someArray.values().map(...).toArray()` |
 | Manual Set intersection/union/diff loops                | `a.intersection(b)`, `a.union(b)`, `a.difference(b)`                                |
-| `instanceof Error`                                      | `Error.isError(x)`                                                                  |
-| `arr.reduce((a, b) => a + b)` on floats                 | `Math.sumPrecise(arr)`                                                              |
 | Custom base64/hex helpers                               | `bytes.toBase64()`, `Uint8Array.fromBase64(s)`                                      |
 | Manual regex escape function                            | `RegExp.escape(input)`                                                              |
 | `fetch('./x.json').then(r => r.json())` at build time   | `import x from './x.json' with { type: 'json' }`                                    |

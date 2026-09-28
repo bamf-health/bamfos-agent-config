@@ -380,15 +380,7 @@ export {User, userSchema};
 
 ### Bad Example -- Undocumented, Unconstrained Schema
 
-```javascript
-// BAD: No JSDoc, no validation, no constraints
-const productSchema = new Schema({
-  name: String, // optional, no rules
-  price: Number, // no minimum, no validator
-});
-```
-
-  **Why bad:** No `required` constraints, no validation, and no JSDoc means editors cannot infer the document shape and consumers cannot tell what is mandatory
+An unconstrained schema like the [Pattern 2 bad example](#bad-example----no-validation) with no JSDoc is worse still: editors cannot infer the document shape and consumers cannot tell what is mandatory.
 
 ---
 

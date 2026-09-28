@@ -135,24 +135,9 @@ userSchema.post('validate', (error, _doc, next) => {
 
 ## Pattern 3: Query Middleware
 
-### Good Example -- Soft Delete Filter
+### Soft Delete Filter
 
-```javascript
-// Automatically exclude soft-deleted documents from all find queries
-userSchema.pre('find', function() {
-  this.where({deletedAt: {$exists: false}});
-});
-
-userSchema.pre('findOne', function() {
-  this.where({deletedAt: {$exists: false}});
-});
-
-userSchema.pre('countDocuments', function() {
-  this.where({deletedAt: {$exists: false}});
-});
-```
-
-  **Why good:** Consistent soft-delete filtering across all read operations, no application code needed to remember the filter
+Query middleware (`pre('find')`, `pre('findOne')`, `pre('countDocuments')`) can automatically exclude soft-deleted documents from all read operations, so application code never has to remember the filter. See [Pattern 4](#pattern-4-complete-soft-delete-plugin) for the complete, reusable implementation.
 
 ### Good Example -- Query Logging
 
@@ -285,7 +270,7 @@ userSchema.pre('save', () => {
 
 ## Middleware Type Reference
 
-See [reference.md](../reference.md#middleware-execution-matrix) for the complete middleware execution matrix showing which operations trigger which hooks.
+See [resources.md](../references/resources.md#middleware-execution-matrix) for the complete middleware execution matrix showing which operations trigger which hooks.
 
 ---
 

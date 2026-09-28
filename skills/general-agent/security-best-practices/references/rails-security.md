@@ -131,9 +131,9 @@ Section order per the HARD-GATE. Every heading appears even when empty (write "N
 ## Secrets, Logging & Operational Exposure
 ```
 
-Each finding carries:
+Each finding uses the finding format in SKILL.md ("Report Format"), with these Rails-specific differences:
 
-- **Severity:** **High** or **Medium** (not "Critical")
-- **Attack path:** input → reach → impact
-- **Affected file:** path + line, e.g. `app/controllers/documents_controller.rb:42`
-- **Mitigation:** smallest credible fix
+- **Severity:** **High** or **Medium** only (not "Critical" or "Low"; see Severity Levels above)
+- **Attack path:** input → reach → impact (use this as the Impact field)
+- **Location:** path + line, e.g. `app/controllers/documents_controller.rb:42`
+- **Fix / Mitigation:** smallest credible fix

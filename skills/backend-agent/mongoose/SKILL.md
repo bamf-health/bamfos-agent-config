@@ -8,18 +8,18 @@ metadata:
 
 # Mongoose ODM Patterns
 
-> **Quick Guide:** Use Mongoose as the ODM layer for MongoDB. Document schemas with JSDoc `@typedef` for editor intellisense — no need for TypeScript. Register all middleware before calling `model()`; hooks added after compilation are silently ignored. Use `.lean()` for any read-only query. Pass `{ session }` to every operation inside a transaction or enable `transactionAsyncLocalStorage`. Prefer `session.withTransaction()` over manual commit/abort. Use `127.0.0.1` instead of `localhost` in connection strings (Node.js 18+ IPv6 preference causes timeouts).
-
+> **Quick Guide:** Use Mongoose as the ODM layer for MongoDB. Document schemas with JSDoc `@typedef` for editor intellisense — no need for TypeScript. Prefer `session.withTransaction()` over manual commit/abort (or enable `transactionAsyncLocalStorage`). Follow the critical rules below.
 
 ## CRITICAL: Before Using This Skill
 
 - **All code must follow project conventions** (kebab-case files, named exports, import ordering, named constants)
-- **You MUST define all middleware (pre/post hooks) BEFORE calling** `model()`: **hooks registered after model compilation are silently ignored with no error**
-- **You MUST pass** `{ session }` **to EVERY operation inside a transaction: missing session causes that operation to run outside the transaction silently**
-- **You MUST use** `.lean()` **for read-only queries returning API responses: skipping lean wastes 3x memory on hydration overhead**
-- **You MUST use** `127.0.0.1` **instead of** `localhost` **in connection strings: Node.js 18+ prefers IPv6 and** `localhost` **causes connection timeouts**
-- **You MUST NOT use** `findOneAndUpdate`**/**`updateOne` **and expect** `pre('save')` **to fire: only** `save()` **and** `create()` **trigger document middleware**
-- **You MUST NOT use** `next()` **callbacks in pre hooks on Mongoose 9: use async/await instead;** `next()` **was removed in v9**
+- **You MUST define all middleware (pre/post hooks) BEFORE calling** `model()`: **hooks registered after model compilation are silently ignored with no error** ([middleware.md](examples/middleware.md) Pattern 1)
+- **You MUST pass** `{ session }` **to EVERY operation inside a transaction: missing session causes that operation to run outside the transaction silently** ([transactions.md](examples/transactions.md) Pattern 1)
+- **You MUST use** `.lean()` **for read-only queries returning API responses: skipping lean wastes 3x memory on hydration overhead** ([resources.md](references/resources.md#when-to-use-lean))
+- **You MUST use** `127.0.0.1` **instead of** `localhost` **in connection strings: Node.js 18+ prefers IPv6 and** `localhost` **causes connection timeouts** ([core.md](examples/core.md) Pattern 1)
+- **You MUST NOT use** `findOneAndUpdate`**/**`updateOne` **and expect** `pre('save')` **to fire: only** `save()` **and** `create()` **trigger document middleware** ([resources.md](references/resources.md#middleware-execution-matrix))
+- **You MUST NOT use** `next()` **callbacks in pre hooks on Mongoose 9: use async/await instead;** `next()` **was removed in v9** ([middleware.md](examples/middleware.md) Pattern 1)
+- **Failure to follow these rules will cause silent middleware bypass, transaction isolation failures, or connection timeouts.**
 
 ## Overview
 
@@ -51,6 +51,8 @@ metadata:
 **When NOT to use:**
 
 - Raw MongoDB driver queries without schema enforcement (use the native driver)
+- Performance-critical bulk operations where the ODM overhead matters (use the native driver)
+- Heavy aggregation-only workloads (aggregation pipelines bypass most Mongoose features)
 - Relational data with complex joins and foreign key constraints (use a relational database)
 - Simple key-value storage (use a dedicated key-value store)
 
@@ -84,29 +86,14 @@ Mongoose provides schema-based modeling for MongoDB. Its value is the **applicat
 
 1. **Schema-first**: Define schemas before models. Schemas enforce structure, validation, defaults, and middleware at the application layer.
 2. **Document with JSDoc, don't duplicate**: Use JSDoc `@typedef` blocks alongside schema definitions to give editors intellisense without compile-time overhead. Keep the schema as the single source of truth.
-3. **Middleware before model**: All pre/post hooks must be registered before `model()`. This is the single most common Mongoose bug — hooks added after compilation are silently ignored.
-4. **Lean for reads**: `.lean()` returns plain JavaScript objects (3x less memory). Use it for every read-only query. Only skip lean when you need Mongoose document methods.
-5. **Session discipline**: Every operation inside a transaction must receive `{ session }`. One missed session means that operation runs outside the transaction with no error.
-6. **Validate at the schema**: Push validation into schema definitions (required, min, max, enum, custom validators with error messages). Don't validate in application code what the schema can enforce.
-
-**When to use Mongoose:**
-
-- You want schema enforcement and validation on MongoDB documents
-- You need middleware hooks (pre/post save, validate, find)
-- You need population (reference resolution between collections)
-- You want computed properties (virtuals) and instance methods
-
-**When NOT to use Mongoose:**
-
-- Performance-critical bulk operations where the ODM overhead matters (use native driver)
-- You only need raw MongoDB queries without schema enforcement
-- You're doing heavy aggregation-only workloads (aggregation pipelines bypass most Mongoose features)
+3. **Middleware before model, lean for reads, session discipline**: see the critical rules above. Registering hooks after `model()` is the single most common Mongoose bug.
+4. **Validate at the schema**: Push validation into schema definitions (required, min, max, enum, custom validators with error messages). Don't validate in application code what the schema can enforce.
 
 ## Core Patterns
 
 ### Pattern 1: Connection Setup
 
-Establish a single connection at application startup. Use environment variables for credentials. Never hardcode connection strings. Use `127.0.0.1` instead of `localhost` (Node.js 18+ IPv6 preference causes timeouts).
+Establish a single connection at application startup. Use environment variables for credentials. Never hardcode connection strings.
 
 ```javascript
 const connection = await mongoose.connect(process.env.MONGODB_URI, {
@@ -161,7 +148,7 @@ See [examples/core.md](examples/core.md) Pattern 3 for the complete implementati
 
 ### Pattern 4: CRUD Operations
 
-Key rules: use `.lean()` for read-only queries (3x memory savings), `save()` when middleware must fire, `{ new: true, runValidators: true }` on direct updates. Never call `.save()` on a lean result (plain object, no methods).
+Key rules: `.lean()` for read-only queries, `save()` when middleware must fire, `{ new: true, runValidators: true }` on direct updates.
 
 ```javascript
 const users = await User.find({isActive: true}).select('name email').lean();
@@ -193,48 +180,33 @@ See [examples/core.md](examples/core.md) Pattern 2 for complete validation schem
 
 ## RED FLAGS
 
+The critical rules above are the highest-priority red flags. Additional gotchas (details in the linked files):
+
 **High Priority Issues:**
 
-- Registering middleware after `model()` call: hooks are silently ignored, no error thrown
-- Running operations in parallel inside a transaction (`Promise.all()`): MongoDB does not support parallel operations within a single transaction session
-- Missing `{ session }` on any operation inside a transaction: that operation runs outside the transaction silently
-- Using `localhost` in connection strings on Node.js 18+: IPv6 preference causes connection timeouts, use `127.0.0.1`
-- Mutating a document fetched with `.lean()` and calling `.save()`: lean returns plain objects without Mongoose methods
+- `Promise.all()` inside a transaction: MongoDB does not support parallel operations within a single transaction session ([transactions.md](examples/transactions.md) Pattern 1)
+- Calling `.save()` on a `.lean()` result: lean returns plain objects without Mongoose methods ([core.md](examples/core.md) Pattern 5)
 
 **Medium Priority Issues:**
 
-- Using `findOneAndUpdate`/`updateOne` and expecting `pre('save')` to fire: only `save()` and `create()` trigger document middleware
-- Unbounded `.populate()` without `limit` or field selection: can return thousands of documents per populate call, each is a separate DB round-trip
-- Not passing `runValidators: true` on `findOneAndUpdate`: schema validation is skipped by default on direct updates
-- Using `Schema.Types.ObjectId` as a runtime constructor: use `Types.ObjectId` to create ObjectId values, `Schema.Types.ObjectId` only inside schema definitions
-- Creating indexes in production application code instead of migration scripts: index builds can lock the collection
+- Unbounded `.populate()` without `limit` or field selection ([population.md](examples/population.md) Pattern 1)
+- Missing `runValidators: true` on `findOneAndUpdate`: validation is skipped by default ([core.md](examples/core.md) Pattern 5)
+- `Schema.Types.ObjectId` is for schema definitions; `Types.ObjectId` is the runtime constructor ([core.md](examples/core.md) Pattern 4)
+- Creating indexes in production application code instead of migration scripts: index builds can lock the collection; disable `autoIndex` in production ([core.md](examples/core.md) Pattern 6)
 
 **Common Mistakes:**
 
-- Forgetting `{ new: true }` on `findOneAndUpdate`: returns the old document by default, not the updated one
-- Using `next()` callbacks in pre hooks on Mongoose 9: `next()` was removed in v9, use async/await
-- Not handling duplicate key errors (error code 11000) from unique indexes
+- Forgetting `{ new: true }` on `findOneAndUpdate`: returns the old document by default
+- Not handling duplicate key errors (code 11000) from unique indexes ([middleware.md](examples/middleware.md) Pattern 2)
 - Using `.lean()` on write operations: lean is for reads only
-- Checking `doc.isNew` in `post('save')` hooks: always `false` after save; capture in `pre('save')` via `this.$locals.wasNew`
-- Defining the same middleware hook multiple times without realizing they stack (all run, not just the last one)
+- Checking `doc.isNew` in `post('save')`: always `false`; capture `this.$locals.wasNew` in `pre('save')` ([middleware.md](examples/middleware.md) Pattern 1)
+- Registering the same hook multiple times: they stack, all run ([middleware.md](examples/middleware.md) Pattern 5)
 
 **Gotchas & Edge Cases:**
 
-- MongoDB has a 16 MB document size limit: deeply embedded arrays can silently hit this
+- MongoDB has a 16 MB document size limit: deeply embedded arrays can silently hit this ([population.md](examples/population.md) Pattern 5)
 - Mongoose buffers all operations until connected: queries queue silently if connection fails, which can mask connection issues in development
-- `deleteOne`/`deleteMany` on the Model do not trigger document `pre('deleteOne')` middleware: they trigger query middleware instead; use `doc.deleteOne()` for document middleware
-- Virtual properties are excluded from `toJSON()`/`toObject()` by default: set `{toJSON: {virtuals: true}}` in schema options or they disappear in API responses
-- `insertMany()` does not trigger `save` middleware: it triggers `insertMany` model middleware only
-- Mongoose 9 disallows pipeline-style updates by default: pass `{ updatePipeline: true }` or they throw
-- `create()` with an array requires array syntax for `{ session }`: `Model.create([data], { session })`: the non-array form `Model.create(data, { session })` does not work in transactions
-
-## CRITICAL REMINDERS
-
-- **All code must follow project conventions** (kebab-case, named exports, import ordering, named constants)
-- **You MUST define all middleware (pre/post hooks) BEFORE calling** `model()`: **hooks registered after model compilation are silently ignored with no error**
-- **You MUST pass** `{ session }` **to EVERY operation inside a transaction: missing session causes that operation to run outside the transaction silently**
-- **You MUST use** `.lean()` **for read-only queries returning API responses: skipping lean wastes 3x memory on hydration overhead**
-- **You MUST use** `127.0.0.1` **instead of** `localhost` **in connection strings: Node.js 18+ prefers IPv6 and** `localhost` **causes connection timeouts**
-- **You MUST NOT use** `findOneAndUpdate`**/**`updateOne` **and expect** `pre('save')` **to fire: only** `save()` **and** `create()` **trigger document middleware**
-- **You MUST NOT use** `next()` **callbacks in pre hooks on Mongoose 9: use async/await instead;** `next()` **was removed in v9**
-- **Failure to follow these rules will cause silent middleware bypass, transaction isolation failures, or connection timeouts.**
+- `Model.deleteOne()`/`deleteMany()` trigger query middleware, not document middleware; `insertMany()` does not trigger `save` middleware ([resources.md](references/resources.md#middleware-execution-matrix))
+- Virtuals are excluded from `toJSON()`/`toObject()` unless `{toJSON: {virtuals: true}}` is set ([population.md](examples/population.md) Pattern 3)
+- Mongoose 9 disallows pipeline-style updates unless `{ updatePipeline: true }` is passed ([resources.md](references/resources.md#mongoose-9-migration-notes))
+- In transactions, use `Model.create([data], { session })` (array form) ([transactions.md](examples/transactions.md) Pattern 3)

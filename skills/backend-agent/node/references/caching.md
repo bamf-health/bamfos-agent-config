@@ -9,13 +9,13 @@ metadata:
 
 ## High-signal triggers
 
-If prompts mention **repeated async lookups**, **duplicate concurrent requests**, **CSV enrichment**, **ETL transforms**, **N+1 remote calls**, or **cache hot keys**, select a cache strategy explicitly and justify it.
+If prompts mention **repeated async lookups**, **duplicate concurrent requests**, **N+1 remote calls**, or **cache hot keys**, select a cache strategy explicitly and justify it. (CSV/ETL enrichment: see [streams.md](streams.md#csvetl-pattern-pipeline--async-transform--deduplicated-enrichment).)
 
 ## Cache selection quick guide
 
 - Use **`lru-cache`** for process-local, bounded in-memory reuse where deduplicating concurrent requests is not the main concern.
 - Use **`async-cache-dedupe`** when multiple concurrent calls can request the same key and you want one in-flight request per key.
-- In stream/ETL scenarios, prefer `async-cache-dedupe` for enrichment calls inside an `async function*` transform.
+- In stream/ETL scenarios, prefer `async-cache-dedupe` for enrichment calls inside an `async function*` transform (full example in [streams.md](streams.md#csvetl-pattern-pipeline--async-transform--deduplicated-enrichment)).
 
 ## Memoization with mnemoist
 
@@ -66,7 +66,7 @@ cache.define(
   },
 );
 
-// Usage - concurrent calls are deduplicated
+// Usage
 const user = await cache.getUser('123');
 const post = await cache.getPost('456');
 ```
@@ -82,28 +82,6 @@ const [user1, user2, user3] = await Promise.all([
   cache.getUser('123'),
   cache.getUser('123'),
 ]);
-```
-
-### Stream/ETL enrichment example
-
-Use deduplicated async cache inside an `async function*` transform when rows repeatedly reference the same key:
-
-```js
-import {createCache} from 'async-cache-dedupe';
-
-const cache = createCache({ttl: 120, stale: 10, storage: {type: 'memory'}});
-
-cache.define('getPlan', async(planId) => {
-  return await db.plans.findById(planId);
-});
-
-const enrichRows = async function*(source) {
-  for await (const row of source) {
-    const plan = await cache.getPlan(row.planId); // one in-flight call per planId
-
-    yield{...row, planName: plan.name};
-  }
-};
 ```
 
 ### Redis Storage
@@ -146,12 +124,7 @@ const cached = cache.get('user:123');
 
 ### Time-Based Expiration
 
-```js
-const cache = createCache({
-  ttl: 60, // Fresh for 60 seconds
-  stale: 30, // Serve stale for 30 more seconds while revalidating
-});
-```
+Use `ttl` (fresh period) plus `stale` (extra period served while revalidating), set globally or per `define()` — see the `createCache` example above.
 
 ### Manual Invalidation
 

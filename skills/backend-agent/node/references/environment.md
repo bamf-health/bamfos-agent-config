@@ -84,24 +84,7 @@ if (process.env.NODE_ENV === 'development') {
 }
 ```
 
-Instead, use explicit environment variables for each concern:
-
-```javascript
-// GOOD - explicit variables for each concern
-const config = {
-  logging: {
-    level: process.env.LOG_LEVEL || 'info',
-    pretty: process.env.LOG_PRETTY === 'true',
-  },
-  security: {
-    rateLimitEnabled: process.env.RATE_LIMIT_ENABLED !== 'false',
-    httpsOnly: process.env.HTTPS_ONLY === 'true',
-  },
-  database: {
-    url: process.env.DATABASE_URL,
-  },
-};
-```
+Instead, use explicit environment variables for each concern (e.g. `LOG_LEVEL`, `RATE_LIMIT_ENABLED`, `HTTPS_ONLY`), grouped in a [configuration object](#configuration-object-pattern).
 
 This approach:
 
@@ -118,9 +101,11 @@ Create a typed configuration object:
 /**
  * @typedef {object} Config
  * @property {{ port: number, host: string }} server
+ * @property {{ level: string, pretty: boolean }} logging
+ * @property {{ rateLimitEnabled: boolean, httpsOnly: boolean }} security
  * @property {{ url: string, poolSize: number }} database
  * @property {{ jwtSecret: string, jwtExpiresIn: string }} auth
- * @property {{ enableMetrics: boolean, enableTracing: boolean }} features
+ * @property {{ enableMetrics: boolean, enableTracing: boolean, newDashboard: boolean, betaApi: boolean }} features
  */
 
 /** @param {string} name */
@@ -141,6 +126,14 @@ const createConfig = function() {
       port: parseInt(process.env.PORT || '3000', 10),
       host: process.env.HOST || '0.0.0.0',
     },
+    logging: {
+      level: process.env.LOG_LEVEL || 'info',
+      pretty: process.env.LOG_PRETTY === 'true',
+    },
+    security: {
+      rateLimitEnabled: process.env.RATE_LIMIT_ENABLED !== 'false',
+      httpsOnly: process.env.HTTPS_ONLY === 'true',
+    },
     database: {
       url: requireEnv('DATABASE_URL'),
       poolSize: parseInt(process.env.DB_POOL_SIZE || '10', 10),
@@ -152,6 +145,8 @@ const createConfig = function() {
     features: {
       enableMetrics: process.env.ENABLE_METRICS === 'true',
       enableTracing: process.env.ENABLE_TRACING === 'true',
+      newDashboard: process.env.FEATURE_NEW_DASHBOARD === 'true',
+      betaApi: process.env.FEATURE_BETA_API === 'true',
     },
   };
 };
@@ -184,17 +179,11 @@ Never commit secrets to version control.
 
 ## Feature Flags
 
-Implement feature flags via environment:
+Implement feature flags via environment variables in the `features` section of the [configuration object](#configuration-object-pattern), and expose a helper:
 
 ```javascript
-const features = {
-  newDashboard: process.env.FEATURE_NEW_DASHBOARD === 'true',
-  betaApi: process.env.FEATURE_BETA_API === 'true',
-  darkMode: process.env.FEATURE_DARK_MODE === 'true',
-};
-
-/** @param {'newDashboard' | 'betaApi' | 'darkMode'} feature */
+/** @param {keyof Config['features']} feature */
 export const isFeatureEnabled = function(feature) {
-  return features[feature] ?? false;
+  return config.features[feature] ?? false;
 };
 ```

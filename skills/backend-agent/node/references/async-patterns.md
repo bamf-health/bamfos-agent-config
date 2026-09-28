@@ -93,19 +93,9 @@ const fetchMultiple = async function(urls) {
 
 ## Avoid Async in Constructors
 
-Constructors cannot be async. Use factory functions instead:
+Constructors cannot be async (you cannot `await` inside them). Use a static async factory instead:
 
 ```js
-// BAD - constructor cannot await
-class DatabaseIncomplete {
-  constructor() {
-    // Cannot use await here
-  }
-}
-```
-
-```js
-// GOOD - factory function (constructors cannot be async)
 class Database {
   constructor(connection) {
     this.connection = connection;

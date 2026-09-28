@@ -9,9 +9,7 @@ Instructions for installing and configuring Tailwind CSS version 4 and above usi
 
 ## Key Changes in Tailwind CSS v4
 
-- **No PostCSS configuration required** when using the Vite plugin
-- **No tailwind.config.js required** - configuration is done via CSS
-- **New @tailwindcss/vite plugin** replaces the PostCSS-based approach
+- **New @tailwindcss/vite plugin** replaces the PostCSS-based approach (see "What NOT to Do" below)
 - **CSS-first configuration** using `@theme` directive
 - **Automatic content detection** - no need to specify content paths
 
@@ -218,10 +216,8 @@ Test the installation with a simple component:
 
 ### Styles Not Applying
 
-1. Verify CSS import statement is `@import "tailwindcss";` (not old directives)
-2. Ensure CSS file is imported in your entry point or referenced in the `nuxt.config.ts` file
-3. Check Vite or Nuxt config includes the `tailwindcss()` plugin
-4. Clear Vite cache: `rm -rf node_modules/.vite && npm run dev`
+1. Re-check the Verification Checklist above.
+2. Clear Vite cache: `rm -rf node_modules/.vite && npm run dev`
 
 ### Plugin Not Found Error
 
@@ -243,4 +239,3 @@ import tailwindcss from "@tailwindcss/vite";
 
 - Official Documentation: https://tailwindcss.com/docs/installation/using-vite
 - Tailwind CSS v4 Upgrade Guide: https://tailwindcss.com/docs/upgrade-guide
-- Nuxt and TailwindCSS: [vue-nuxt/references/tailwind.md](../../vue-nuxt/references/tailwind.md)

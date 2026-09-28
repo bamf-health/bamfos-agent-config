@@ -13,33 +13,17 @@ Flaky tests are tests that pass or fail intermittently without code changes. The
 
 When tests timeout, use these techniques to identify the culprit:
 
-### 1. Use --test-reporter for Detailed Output
+### 1-3. Reporter, Timeout, and Isolation
+
+Follow the fail-fast command path (explicit `--test-reporter=spec` + `--test-timeout`, then isolate file and test name) in [stuck-processes-and-tests.md](stuck-processes-and-tests.md#command-path-run-in-order). The timeout error includes the test name and file location. Additional options:
 
 ```bash
-# Show each test as it runs (tap format shows test file and name)
+# tap format shows test file and name as each test runs
 node --test --test-reporter=tap
 
-# Use spec reporter for hierarchical view
-node --test --test-reporter=spec
-
-# Run with verbose output to see which test hangs
+# Keep a log to see which test hangs
 node --test --test-reporter=spec 2>&1 | tee test-output.log
-```
 
-### 2. Run Tests with Timeout Tracking
-
-```bash
-# Set a global timeout and see which test exceeds it
-node --test --test-timeout=5000
-
-# The error message will include the test name and file:
-# Error: test timed out after 5000ms
-#     at /path/to/test.js:42:5
-```
-
-### 3. Run Individual Test Files
-
-```bash
 # Isolate by running files one at a time
 for f in src/**/*.test.js; do
   echo "Running: $f"
@@ -77,23 +61,9 @@ node --inspect --test src/hanging.test.js
 # Check the "Async" call stack to see what's pending
 ```
 
-### 6. Use wtfnode to Find Open Handles
+### 6. Find Open Handles
 
-```javascript
-import {describe, it, after} from 'node:test';
-import wtfnode from 'wtfnode';
-
-describe('Debug hanging tests', () => {
-  after(() => {
-    // Dump what's keeping Node.js alive
-    wtfnode.dump();
-  });
-
-  it('might hang', async() => {
-    // Your test
-  });
-});
-```
+Use `why-is-node-running` (`--import why-is-node-running/include` + `SIGUSR1`) to dump what's keeping Node.js alive. See [stuck-processes-and-tests.md](stuck-processes-and-tests.md#command-path-run-in-order).
 
 ## Common Causes of Flaky Tests
 
@@ -260,49 +230,22 @@ it('should send notification', async(t) => {
 
 **Symptom**: Tests fail with "too many open files" or connections exhausted.
 
-```javascript
-// BAD - Resources not cleaned up
-it('should read file', async(t) => {
-  const handle = await fs.open('test.txt');
-  const content = await handle.read();
-
-  t.assert.ok(content);
-  // handle never closed!
-});
-
-// GOOD - Always clean up resources
-it('should read file', async(t) => {
-  const handle = await fs.open('test.txt');
-
-  t.after(() => handle.close()); // Cleanup registered
-
-  const content = await handle.read();
-
-  t.assert.ok(content);
-});
-```
+Register cleanup in the same scope that created the resource (e.g. `t.after(() => handle.close())` right after `fs.open()`). See the deterministic teardown example in [stuck-processes-and-tests.md](stuck-processes-and-tests.md#good-deterministic-teardown).
 
 ## Debugging Strategies
 
 ### 1. Run Tests in Isolation
 
-```bash
-# Run single test file
-node --test src/user.test.js
-
-# Run single test by name
-node --test --test-name-pattern="should create user" src/user.test.js
-```
+Run a single file, then a single test with `--test-name-pattern`, as shown in [stuck-processes-and-tests.md](stuck-processes-and-tests.md#command-path-run-in-order).
 
 ### 2. Increase Concurrency to Expose Race Conditions
 
 ```bash
 # Run with high concurrency to surface race conditions
 node --test --test-concurrency=10
-
-# Or run the same test multiple times
-for i in {1..50}; do node --test src/flaky.test.js || echo "Failed on run $i"; done
 ```
+
+Or rerun the same test many times with the stress-rerun loop in [stuck-processes-and-tests.md](stuck-processes-and-tests.md#command-path-run-in-order).
 
 ### 3. Use Test Retry to Identify Flaky Tests
 
@@ -370,19 +313,7 @@ const deterministicId = `test-user-${t.name}`;
 
 ### 2. Mock External Services
 
-```javascript
-it('should fetch user', async(t) => {
-  // Mock fetch to avoid network flakiness
-  t.mock.method(globalThis, 'fetch', () => ({
-    ok: true,
-    json: () => ({id: '1', name: 'John'}),
-  }));
-
-  const user = await fetchUser('1');
-
-  t.assert.equal(user.name, 'John');
-});
-```
+Mock `fetch` with `t.mock.method(globalThis, 'fetch', ...)` to avoid network flakiness. See [testing.md](testing.md#mocking-methods) and [Network Reliability](#3-network-reliability) below.
 
 ### 3. Use Explicit Waits Instead of Timeouts
 
@@ -410,24 +341,7 @@ await waitFor(() => element.isVisible());
 
 ### 4. Ensure Test Isolation with Transactions
 
-```javascript
-describe('database tests', () => {
-  beforeEach(async() => {
-    await db.query('BEGIN');
-  });
-
-  afterEach(async() => {
-    await db.query('ROLLBACK');
-  });
-
-  it('should insert record', async(t) => {
-    await db.insert({name: 'test'});
-    const records = await db.findAll();
-
-    t.assert.equal(records.length, 1);
-  });
-});
-```
+Begin a transaction in `beforeEach` and roll it back in `afterEach`. See [testing.md](testing.md#test-hooks-for-setupteardown).
 
 ## CI-Specific Flakiness
 

@@ -55,18 +55,11 @@ You can find more information about this in [How nginx processes a request](http
 
 ### Location evaluation order
 
-As described in the [docs](https://nginx.org/en/docs/http/ngx_http_core_module.html#location), Nginx evaluates locations in special order, not necessarily the order locations are defined in config files. Nginx will first search for the most specific prefix location given by literal strings. The location with the longest prefix is selected and remembered. Then regular expressions are checked, in order they are defined in the config files. The regular expressions search terminates on the first match, and the corresponding location is used. If no regular expression match is found, the previously remembered longest prefix is used. Here are all the location modifiers:
-
-- `=` -  exact match
-- `~` - case sensitive regex match
-- `~*` - case insensitive regex match
-- `^~` - prefix match which prevents Regex expressions from being checked
-
-Order of location match:
+As described in the [docs](https://nginx.org/en/docs/http/ngx_http_core_module.html#location), Nginx evaluates locations in special order, not necessarily the order locations are defined in config files. Nginx will first search for the most specific prefix location given by literal strings. The location with the longest prefix is selected and remembered. Then regular expressions are checked, in order they are defined in the config files. The regular expressions search terminates on the first match, and the corresponding location is used. If no regular expression match is found, the previously remembered longest prefix is used. Location modifiers, in match priority order:
 
 1. **`= /exact`** — Exact match. Wins immediately, stops all searching.
 2. **`^~ /prefix`** — Preferential prefix. If matched, skips regex evaluation entirely.
-3. **`~ regex`** / **`~* regex`** — Regular expressions, evaluated in config file order. First match wins.
+3. **`~ regex`** (case-sensitive) / **`~* regex`** (case-insensitive) — Regular expressions, evaluated in config file order. First match wins.
 4. **`/prefix`** — Standard prefix. Longest match wins, but only used if no regex matched.
 
 Important caveats:
@@ -190,19 +183,23 @@ Other commonly affected directives:
 - `zone_sync_ssl_conf_command`
 - `sub_filter`
 
-Some directives can be specified multiple times in the same block and effectively add together. For example, you can have `proxy_next_upstream error;` in server block and `proxy_next_upstream timeout;` in the same block again. It would work the same as having `proxy_next_upstream error timeout;`. While it might not make sense having the same directive applied multiple times in the same block, it is useful in complex codebases where you have multiple includes, or a global include. For example there might be a file called `global-options` that is included in every server block and defines a `proxy_next_upstream error;` amongst opther options. If you want to use a another proxy_next_upstream value in one specific server block, you don't need to omit the global-options include and can just specify another proxy_next_upstream config. This is true for all directives that use `ngx_conf_set_bitmask_slot` in Nginx source.
+Some directives can be specified multiple times in the same block and effectively add together. For example, you can have `proxy_next_upstream error;` in a server block and `proxy_next_upstream timeout;` in the same block again. It would work the same as having `proxy_next_upstream error timeout;`. While it might not make sense having the same directive applied multiple times in the same block, it is useful in complex codebases where you have multiple includes, or a global include. For example there might be a file called `global-options` that is included in every server block and defines a `proxy_next_upstream error;` amongst other options. If you want to use another proxy_next_upstream value in one specific server block, you don't need to omit the global-options include and can just specify another proxy_next_upstream config. This is true for all directives that use `ngx_conf_set_bitmask_slot` in Nginx source.
 
-```
+This accumulation only happens **within the same block**. Across levels the normal inheritance rule applies: if a child block sets the directive, the parent's value is replaced, not added to.
+
+```nginx
 http {
-    proxy_next_upstream error;
+    proxy_next_upstream error;          # replaced (not merged) in any child that sets it
 
     server {
         listen 80;
         server_name example.com;
 
-        # This will cause nginx -t to complain about duplicate "error"
-        # because "error" is already inherited from http level
-        proxy_next_upstream error timeout;
+        include global-options;          # contains: proxy_next_upstream error;
+        proxy_next_upstream timeout;     # same block -> effective value is "error timeout"
+
+        # Repeating a value already set in the SAME block (e.g. another
+        # "proxy_next_upstream error;") makes nginx -t warn: duplicate value "error"
 
         location /api {
             proxy_pass http://backend;
@@ -210,9 +207,6 @@ http {
     }
 }
 ```
-
-
-
 
 ## Upstream Keepalive
 

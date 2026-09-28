@@ -13,9 +13,8 @@ metadata:
 
 This skill provides a general overview of JavaScript best practices and guidelines.
 
-- Use early returns whenever possible to make the code more readable.
-- Use descriptive variable and function/const names. Only use abbreviations when they are well-known and universally understood.
-- Prefer CSS transitions/animations over JavaScript for smoother, GPU-accelerated effects
+- Follow the [general-code-quality](../../general-agent/general-code-quality/SKILL.md) skill for early returns, naming, and comments.
+- Prefer CSS transitions/animations over JavaScript (see the [css](../css/SKILL.md) skill).
 - Check the code for linting errors and fix them, using `eslint` and `eslint-config-kswedberg` if available.
 
 ## Function Syntax
@@ -79,12 +78,6 @@ export type User = {
   name: string;
   email: string;
 };
-
-export type User = {
-  id: string;
-  name: string;
-  email: string;
-};
 ```
 
 ```javascript
@@ -113,8 +106,7 @@ export const useUser = (user = null) => {
 
 - Treat all external input as untrusted; validate and sanitize it.
 - Prevent injection attacks by parameterizing queries and escaping output contexts
-- Avoid logging secrets, tokens, or PII.
-- Ensure logging contains enough context for triage without leaking secrets
+- Log enough context for triage, but never secrets, tokens, or PII.
 
 ## Performance
 

@@ -57,7 +57,6 @@ Output must be neutral, helpful, and respectful. Avoid patronizing language, eup
   - When the container receives keyboard focus, the appropriate sub-element should show as focused. This behavior depends on context. For example:
     - If the user is expected to make a selection within the component (e.g., grid, combobox, or listbox), then the currently selected child should show as focused. Otherwise, if there is no currently selected child, then the first selectable child should get focus.
     - Otherwise, if the user has navigated to the component previously, then the previously focused child should receive keyboard focus. Otherwise, the first interactive child should receive focus.
-- Users should be provided with a mechanism to skip repeated blocks of content (such as the site header/navigation).
 - Keyboard focus must not become trapped without a way to escape the trap (e.g., by pressing the escape key to close a dialog).
 
 #### Bypass blocks
@@ -133,7 +132,6 @@ When using roving tabindex to manage focus in a composite component, the element
 ### Voice Access instructions
 
 - The accessible name of all interactive elements must contain the visual label. This is so that voice access users can issue commands like "Click `<label>`". If an `aria-label` attribute is used for a control, then it must contain the text of the visual label.
-- Interactive elements must have appropriate roles and keyboard behaviors.
 
 ## Input and control labels
 
@@ -150,7 +148,6 @@ When using roving tabindex to manage focus in a composite component, the element
 
 ### HTML forms NOT built with FormKit
 - The following instructions are for forms that are NOT built with the FormKit library. For FormKit-based forms, refer to `../formkit/SKILL.md`.
-- Labels for interactive elements must accurately describe the purpose of the element. E.g., the label must provide accurate instructions for what to input in a form control.
 - Headings must accurately describe the topic that they introduce.
 - Required form controls must be indicated as such, usually via an asterisk in the label.
   - Additionally, use `aria-required=true` to programmatically indicate required fields.

@@ -139,3 +139,5 @@ const rarelyCalled = function() {
   return heavyModule.doExpensiveThing();
 };
 ```
+
+Restrictions: namespace form only (no `import defer { foo }` or default imports), and modules that use top-level `await` can't be deferred.

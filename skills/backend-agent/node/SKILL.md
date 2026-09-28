@@ -16,11 +16,11 @@ For multi-step processes, follow these high-level sequences before consulting th
 
 **Graceful shutdown**: Register signal handlers (SIGTERM/SIGINT) → stop accepting new work → drain in-flight requests → close external connections (DB, cache) → exit with appropriate code. See [references/graceful-shutdown.md](references/graceful-shutdown.md).
 
-**Error handling**: Define a shared error base class → classify errors (operational vs programmer) → add async boundary handlers (`process.on('unhandledRejection')`) → propagate typed errors through the call stack → log with context before responding or crashing. See [references/error-handling.md](references/error-handling.md).
+**Error handling**: Define a shared error base class → classify errors (operational vs programmer) → do not add manual `unhandledRejection`/`uncaughtException` handlers → propagate typed errors through the call stack → log with context before responding or crashing. See [references/error-handling.md](references/error-handling.md).
 
 **Diagnosing flaky tests**: Isolate the test with `--test-only` → check for shared state or timer dependencies → inspect async teardown order → add retry logic as a temporary diagnostic step → fix root cause. See [references/flaky-tests.md](references/flaky-tests.md).
 
-**Diagnosing stuck processes/tests** (`node --test` hangs, "process did not exit", CI timeout, open handles): isolate file/test → run with explicit timeout/reporter → inspect handles via `why-is-node-running` (`SIGUSR1`) → patch deterministic teardown in resource-creation scope → rerun isolated + full suite until stable. See [references/stuck-processes-and-tests.md](references/stuck-processes-and-tests.md).
+**Diagnosing stuck processes/tests** (`node --test` hangs, "process did not exit", CI timeout, open handles): follow the 5-step checklist (isolate → fail fast → capture handles with `why-is-node-running` → deterministic teardown → verify stability) in [references/stuck-processes-and-tests.md](references/stuck-processes-and-tests.md).
 
 **Profiling a slow path**: Reproduce under realistic load → capture a CPU profile with `--cpu-prof` → identify hot functions → check for stream backpressure or unnecessary serialisation → validate improvement with a benchmark. See [references/profiling.md](references/profiling.md) and [references/performance.md](references/performance.md).
 
@@ -28,26 +28,12 @@ For multi-step processes, follow these high-level sequences before consulting th
 
 When the task mentions **CSV**, **ETL**, **ingestion pipelines**, **large file processing**, **backpressure**, **repeated lookups**, or **deduplicating concurrent async calls**, explicitly apply this checklist:
 
-1. Use `await pipeline(...)` from `node:stream/promises` (prefer this over chained `.pipe()` in guidance/code).
+1. Use `await pipeline(...)` from `node:stream/promises` (not chained `.pipe()`), with `createReadStream(input)` → `async function*` transform → writable destination.
 2. Include at least one explicit `async function*` transform when data is being transformed in-stream.
-3. Choose a cache strategy when repeated work appears:
-   - `lru-cache` for bounded in-memory reuse in a single process.
-   - `async-cache-dedupe` for async request deduplication / stale-while-revalidate behavior.
+3. When repeated work appears, choose a cache strategy (`lru-cache` or `async-cache-dedupe`) — see the selection guide in [references/caching.md](references/caching.md).
 4. Show where backpressure is handled (implicitly via `pipeline()` or explicitly via `drain`).
 
-### Integrated example pattern (CSV/ETL)
-
-For CSV/ETL-style prompts, prefer an answer structure like:
-
-- `createReadStream(input)`
-- `async function*` parser/transform
-- optional cached enrichment lookup (`async-cache-dedupe` or `lru-cache`)
-- `await pipeline(...)` to a writable destination
-
-Link relevant rules directly in explanations so models can retrieve details:
-
-- [references/streams.md](references/streams.md)
-- [references/caching.md](references/caching.md)
+The full CSV/ETL example (pipeline + async transform + deduplicated enrichment) is in [references/streams.md](references/streams.md). Link these rule files directly in explanations so models can retrieve details.
 
 ## How to use
 

@@ -98,13 +98,8 @@ const addToCache = function(key, value) {
   cache.set(key, value); // Never cleaned up
 };
 
-// GOOD - LRU cache with max size
-import {LRUCache} from 'lru-cache';
-
-const lruCache = new LRUCache({
-  max: 500,
-  ttl: 1000 * 60 * 5,
-});
+// GOOD - bounded LRU cache with max size and ttl
+// (lru-cache; see caching.md#lru-cache for configuration)
 
 const handler = function() {
   // Event handler body

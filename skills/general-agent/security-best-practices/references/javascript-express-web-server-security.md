@@ -1,48 +1,20 @@
 # Express (Node.js) Web Security Spec (Express 5.x / 4.19.2+, Node.js LTS)
 
-This document is designed as a **security spec** that supports:
-
-1. **Secure-by-default code generation** for new Express apps and routes.
-2. **Security review / vulnerability hunting** in existing Express code (passive “notice issues while working” and active “scan the repo and report findings”).
-
-It is intentionally written as a set of **normative requirements** (“MUST/SHOULD/MAY”) plus **audit rules** (what bad patterns look like, how to detect them, and how to fix/mitigate them).
+The shared safety constraints, operating modes, and finding format are in SKILL.md.
 
 ---
 
 ## 0) Safety, boundaries, and anti-abuse constraints (MUST FOLLOW)
 
-- MUST NOT request, output, log, or commit secrets (API keys, passwords, private keys, session secrets, cookies, tokens).
-- MUST NOT “fix” security by disabling protections (e.g., weakening cookie flags, disabling CSRF defenses for cookie-authenticated apps, enabling permissive CORS, trusting proxy headers from the open internet, turning on debugging/stack traces in production, disabling TLS without a replacement).
-- MUST provide **evidence-based findings** during audits: cite file paths, code snippets, middleware/config values, and runtime assumptions that justify the claim.
-- MUST treat uncertainty honestly: if a protection might exist in infrastructure (reverse proxy, gateway, WAF, CDN), report it as “not visible in app code; verify at runtime/config.”
+- Express-specific examples of disabling protections (never do this as a “fix”): weakening cookie flags, disabling CSRF defenses for cookie-authenticated apps, enabling permissive CORS, trusting proxy headers from the open internet, turning on debugging/stack traces in production, disabling TLS without a replacement.
+- When citing evidence, include middleware/config values and runtime assumptions.
 - MUST prefer vetted libraries and platform controls over “roll your own” crypto/auth/session/CSRF. Express explicitly expects the application to validate/handle user input correctly; it does not do this automatically. ([Express][1])
 
 ---
 
-## 1) Operating modes
+## 1) Generation and audit focus
 
-### 1.1 Generation mode (default)
-
-When asked to write new Express code or modify existing code:
-
-- MUST follow every **MUST** requirement in this spec.
-- SHOULD follow every **SHOULD** requirement unless the user explicitly says otherwise.
-- MUST prefer safe-by-default APIs and proven libraries over custom security code.
-- MUST avoid introducing new risky sinks (shell execution, dynamic code evaluation, unsafe redirects, serving user files as HTML, template rendering from untrusted strings, unsafe filesystem paths, SSRF URL fetch endpoints, etc.).
-
-### 1.2 Passive review mode (always on while editing)
-
-While working anywhere in an Express repo (even if the user did not ask for a security scan):
-
-- MUST “notice” violations of this spec in touched/nearby code.
-- SHOULD mention issues as they come up, with a brief explanation + safe fix.
-
-### 1.3 Active audit mode (explicit scan request)
-
-When the user asks to “scan”, “audit”, or “hunt for vulns”:
-
-- MUST systematically search the codebase for violations of this spec.
-- MUST output findings in a structured format (see §2.3).
+In generation mode, MUST avoid introducing new risky sinks (shell execution, dynamic code evaluation, unsafe redirects, serving user files as HTML, template rendering from untrusted strings, unsafe filesystem paths, SSRF URL fetch endpoints, etc.).
 
 Recommended audit order:
 
@@ -83,45 +55,23 @@ Special proxy note:
 
 A request is state-changing if it can create/update/delete data, change auth/session state, trigger side effects (purchase, email send, webhook send), or initiate privileged actions.
 
-### 2.3 Required audit finding format
-
-For each issue found, output:
-
-- Rule ID:
-- Severity: Critical / High / Medium / Low
-- Location: file path + function/route/middleware name + line(s)
-- Evidence: the exact code/config snippet
-- Impact: what could go wrong, who can exploit it
-- Fix: safe change (prefer minimal diff)
-- Mitigation: defense-in-depth if immediate fix is hard
-- False positive notes: what to verify if uncertain
-
 ---
 
 ## 3) Secure baseline: minimum production configuration (MUST in production)
 
-This is the smallest “production baseline” that prevents common Express misconfigurations.
+This is the smallest “production baseline” that prevents common Express misconfigurations. Details are in the referenced rules.
 
-Minimum baseline targets:
-
-- `helmet()` is used and configured (especially CSP where applicable), and fingerprinting is reduced (disable `x-powered-by`). ([Express][1])
-- A custom 404 handler and a custom error handler exist, and production does not leak internal stack traces. ([Express][1])
-- Cookie/session usage is deliberate:
-  - Not using default session cookie names
-  - Cookies use secure attributes (`Secure`, `HttpOnly`, `SameSite`) as appropriate
-  - Cookie-backed sessions never store secrets (they are readable by the client)
-  - Server-side sessions never use MemoryStore in production. ([Express][1])
-
-- Request body parsing has explicit limits (`express.json({ limit })`, `express.urlencoded({ limit, parameterLimit, depth })`). ([Express][5])
-- `trust proxy` is configured explicitly to match your proxy topology; not blindly `true`. ([Express][2])
-- Login/auth endpoints have brute-force protection and rate limiting. ([Express][1])
-- Dependencies are regularly audited/updated (`npm audit` + advisory response). ([Express][1])
+- `helmet()` configured, `x-powered-by` disabled (EXPRESS-HEADERS-001, EXPRESS-FINGERPRINT-001).
+- Custom 404 and error handlers; no stack traces in production (EXPRESS-FINGERPRINT-001, EXPRESS-ERROR-001).
+- Deliberate cookie/session usage: secure cookie attributes, non-default session cookie name, no secrets in cookie-backed sessions, no MemoryStore in production (EXPRESS-COOKIE-001, EXPRESS-SESS-001, EXPRESS-SESS-002).
+- Explicit body parsing limits (EXPRESS-BODY-001).
+- `trust proxy` explicitly matched to the proxy topology (EXPRESS-PROXY-001).
+- Brute-force protection / rate limiting on auth endpoints (EXPRESS-AUTH-001).
+- Regular dependency audits/updates (EXPRESS-DEPS-001).
 
 ---
 
 ## 4) Rules (generation + audit)
-
-Each rule contains: required practice, insecure patterns, detection hints, and remediation.
 
 ### EXPRESS-INPUT-001: Treat all user input as untrusted and validate it
 
@@ -264,7 +214,7 @@ Severity: Medium
 Required:
 
 - MUST set cookie flags appropriately for any authentication/session cookie:
-  - `Secure` when HTTPS (production) IMPORTANT NOTE: Only set `Secure` in production environment if TLS is configured. When running in a local dev environment over HTTP, do not set `Secure` property on cookies. You should do this conditionally based on if the app is running in production mode. You should also include a property like `SESSION_COOKIE_SECURE` which can be used to disable `Secure` cookies when testing over HTTP.
+  - `Secure` when HTTPS (production) — per the TLS note in SKILL.md, set it conditionally based on production mode, with an override like `SESSION_COOKIE_SECURE` to disable it when testing over HTTP.
   - `HttpOnly` for auth/session cookies
   - `SameSite` set deliberately (`Lax` is a common baseline; `Strict` if compatible; `None` only with `Secure` and a justified cross-site need)
 
@@ -363,7 +313,7 @@ Notes:
 
 Severity: High
 
-- IMPORTANT NOTE: If cookies are not being used for auth (ie auth is via Authentication header or other passed token), then there is no CSRF risk.
+- IMPORTANT NOTE: If cookies are not being used for auth (i.e., auth is via an `Authorization: Bearer ...` header or other passed token), then classic browser CSRF is not applicable.
 
 Required:
 
@@ -371,10 +321,6 @@ Required:
 - SHOULD use a well-understood CSRF mitigation (token-based is the typical baseline).
 - MAY add defense-in-depth: Origin/Referer validation, Fetch Metadata enforcement, SameSite cookies, custom header requirements for XHR/fetch—**but do not treat these as a full replacement** unless explicitly designed and justified.
 - MUST use at a minimum require a custom HTTP header if form based CRSF tokens are not practical, as this is the second strongest method.
-
-IMPORTANT NOTE:
-
-- If authentication is done via `Authorization: Bearer ...` headers (and not cookies), classic browser CSRF is typically not applicable;
 
 Insecure patterns:
 
@@ -1043,7 +989,7 @@ Notes:
 When actively scanning an Express repo, these patterns are high-signal:
 
 - TLS / transport:
-  - `app.listen(80` without reverse proxy mention; missing `helmet`; cookies missing `secure` ([Express][1]) (NOTE this only applies to web facing applications, internal apps likely won't have TLS)
+  - `app.listen(80` without reverse proxy mention; missing `helmet`; cookies missing `secure` ([Express][1]) (see the TLS note in SKILL.md)
 
 - Proxy trust:
   - `app.set('trust proxy', true)`; logic using `req.ip`/`req.protocol`/`req.hostname` ([Express][2])
@@ -1085,13 +1031,6 @@ When actively scanning an Express repo, these patterns are high-signal:
 
 - Node runtime hazards:
   - `--inspect` in production scripts; `insecureHTTPParser` usage ([Node.js][15])
-
-Always try to confirm:
-
-- data origin (untrusted vs trusted)
-- sink type (HTML/template, SQL/NoSQL, subprocess, filesystem, redirect, outbound HTTP)
-- protective controls present (validation, allowlists, middleware, proxy config, header policies)
-- whether protections are at the edge vs in app code
 
 ---
 

@@ -1,6 +1,6 @@
 # Mongoose Reference
 
-> Decision frameworks, quick reference tables, schema types, query operators, and migration notes. See [SKILL.md](SKILL.md) for core concepts and [examples/](examples/) for code examples.
+> Decision frameworks, quick reference tables, schema types, query operators, and migration notes. See [SKILL.md](../SKILL.md) for core concepts and [examples/](../examples/) for code examples.
 
 ---
 
@@ -71,7 +71,7 @@ Do you need to resolve references?
 | `Map`                   | `meta: { type: Map, of: String }`        |
 | `Schema.Types.UUID`     | `uuid: { type: Schema.Types.UUID }`      |
 
-**Critical distinction:** `Schema.Types.ObjectId` is the schema definition type. `Types.ObjectId` is the runtime constructor used to create ObjectId values (for example, `new Types.ObjectId(id)`). Mixing them up causes runtime errors.
+Use `Schema.Types.ObjectId` in schema definitions and `Types.ObjectId` at runtime (e.g. `new Types.ObjectId(id)`); see [core.md](../examples/core.md) Pattern 4.
 
 ---
 
@@ -144,7 +144,7 @@ Do you need to resolve references?
 | `retryReads`               | true    | Retry failed reads automatically      |
 | `family`                   | 0       | Force IPv4 (4) or IPv6 (6)            |
 | `bufferCommands`           | true    | Queue operations before connection    |
-| `autoIndex`                | true    | Auto-create indexes (disable in prod) |
+| `autoIndex`                | true    | Auto-create indexes (disable in prod; see [core.md](../examples/core.md) Pattern 6) |
 
 ---
 

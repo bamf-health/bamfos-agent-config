@@ -137,7 +137,7 @@ const signals = ['SIGTERM', 'SIGINT'];
 let isShuttingDown = false;
 
 const cleanup = async function() {
-  // Close HTTP server, database pool, etc. (see health check example above)
+  // Close HTTP server, database pool, etc. (see Multiple Resources Cleanup above)
 };
 
 /** @param {string} signal */

@@ -157,12 +157,8 @@ const userSchema = new Schema(
   },
 );
 
-userSchema.virtual('fullName').get(function() {
-  return `${this.firstName} ${this.lastName}`;
-});
-
 userSchema
-.virtual('displayName')
+.virtual('fullName')
 .get(function() {
   return `${this.firstName} ${this.lastName}`;
 })

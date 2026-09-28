@@ -22,11 +22,11 @@ For FormKit, load [formkit](../formkit/SKILL.md).
 
 - **SFC order:** `<template>`, then `<script setup>`, then `<style>` if needed.
 - **Names:** kebab-case files and template tags; PascalCase import bindings. Vue built-ins stay PascalCase (`Transition`, `Teleport`, `KeepAlive`).
-- **Macros:** runtime `defineProps` / `defineEmits` / `defineModel` (object or array). No type-based macros. Do not destructure `defineProps`.
+- **Macros:** runtime `defineProps` / `defineEmits` / `defineModel` (object or array). No type-based macros. Do not destructure `defineProps` (including Vue 3.5 reactive destructure).
 - **Props:** each prop has `type` and either `required` or `default`.
 - **Reactivity:** `shallowRef` over `ref` when deep tracking is not needed. Return refs from composables (not `reactive` objects).
-- **Auto-imports (Nuxt):** do not import Vue APIs, components, composables, or stores. Import a `.vue` file only when it is not auto-imported.
-- **SSR:** components must be isomorphic. Branch with `import.meta.client` / `import.meta.server`. Use `<client-only>` for client-only template trees.
+- **Auto-imports (Nuxt):** do not import Vue APIs, components, composables, utils, or stores. `server/` auto-imports Nitro/H3 and `server/utils`. Files in nested directories under `composables/` and `utils/` are NOT auto-imported. Explicitly import third-party modules, and a `.vue` file only when it is not auto-imported.
+- **SSR:** components must be isomorphic. Branch with `import.meta.client` / `import.meta.server`. Use `<client-only>` for client-only template trees. Pitfalls: [references/nuxt-ssr.md](references/nuxt-ssr.md).
 
 ```vue
 <template>
@@ -54,7 +54,7 @@ Follow [Nuxt directory structure](https://nuxt.com/docs/4.x/directory-structure)
 - Extract reusable logic into `app/composables/` (`use*` names). VueUse first for common utilities.
 - Global state: Pinia `defineStore` using state, getters, and actions — with actions owning async work; local state: `ref` / `shallowRef` / `computed`.
 - `provide`/`inject` only for deep trees that props cannot cover.
-- Lazy-load off-critical UI with the `lazy-` component prefix (or `defineAsyncComponent` when auto-import does not apply).
+- Lazy-load off-critical UI with the `lazy-` component prefix (or `defineAsyncComponent` when auto-import does not apply — never both).
 - ESLint: `@nuxt/eslint` + `eslint-config-kswedberg/flat/nuxt.mjs`.
 
 ## Data, routing, errors
@@ -71,7 +71,6 @@ If the project uses Tailwind, utilities in the template are the default. `<style
 ## Load as needed
 
 - [references/vue.md](references/vue.md) — macros, reactivity, watchers, composables, built-ins
-- [references/nuxt.md](references/nuxt.md) — SSR gating, auto-imports, `useFetch` / `useAsyncData`
 - [references/nuxt-data-fetching.md](references/nuxt-data-fetching.md) — Nuxt data fetching
 - [references/nuxt-ssr.md](references/nuxt-ssr.md) — SSR best practices and avoiding common SSR pitfalls
 - [references/tailwind.md](references/tailwind.md) — Tailwind v4 in Nuxt

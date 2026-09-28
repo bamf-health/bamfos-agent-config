@@ -17,9 +17,6 @@ import pino from 'pino';
 const logger = pino({
   level: process.env.LOG_LEVEL || 'info',
 });
-
-logger.info({userId: user.id}, 'User created');
-logger.error({err, orderId: order.id}, 'Failed to process payment');
 ```
 
 ## Log Levels
@@ -113,9 +110,19 @@ requestLogger.info('Processing request');
 requestLogger.info({itemId}, 'Item processed');
 ```
 
-## Redaction
+## Avoid Logging Sensitive Data
 
-Use pino's built-in redaction for sensitive fields:
+Never log credentials, tokens, or personal data. Log only safe identifiers:
+
+```javascript
+// BAD - logging sensitive data
+logger.info({email, password}, 'User login');
+
+// GOOD - log only safe identifiers
+logger.info({email}, 'User login');
+```
+
+As a safety net, use pino's built-in redaction for sensitive fields:
 
 ```javascript
 const logger = pino({
@@ -170,14 +177,3 @@ NODE_DEBUG=mymodule,http,net node app.js
 
 This also works with Node.js internals (`NODE_DEBUG=http,net,tls`) for debugging core module behavior.
 
-## Avoid Logging Sensitive Data
-
-Never log credentials, tokens, or personal data:
-
-```javascript
-// BAD - logging sensitive data
-logger.info({email, password}, 'User login');
-
-// GOOD - log only safe identifiers
-logger.info({email}, 'User login');
-```

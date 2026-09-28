@@ -393,7 +393,7 @@ userSchema.index({googleId: 1}, {unique: true, sparse: true});
 
 ### Index Best Practices
 
-1. **Disable autoIndex in production** -- set `{ autoIndex: false }` in schema options, create indexes via migration scripts
+1. **Disable autoIndex in production** -- create indexes via migration scripts (see [core.md](core.md) Pattern 6)
 2. **Follow ESR rule** for compound indexes -- Equality, Sort, Range
 3. **One text index per collection** -- include all searchable fields in one index
 4. **Use `explain("executionStats")`** to verify index usage -- look for `IXSCAN` not `COLLSCAN`
